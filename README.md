@@ -1,4 +1,4 @@
-The README is availabe as a <a href='README.ipynb'>Jupyter notebook</a>.
+The README is availabe as a <a href='README.ipynb'>Jupyter notebook</a>. The object structure is represented by a <a href="./docs/object_structure.json">dictionary</a>.
 
 Log in to the container to work interactively:
 ```
