@@ -1,4 +1,5 @@
 rm *~
+rm .gitignore~
 rm -rf ./saved_learners/
 rm -rf ./__pycache__/
 rm -rf ./learners/__pycache__/
