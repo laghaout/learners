@@ -5,4 +5,4 @@ rm -rf ./learners/__pycache__/
 rm -rf ./dist/
 rm -rf ./learners.egg-info/
 rm -rf ./build/
-rm -rf .ipynb_checkpoints
+rm -rf ./.ipynb_checkpoints/
