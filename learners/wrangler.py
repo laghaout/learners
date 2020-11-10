@@ -8,7 +8,6 @@ Created on Thu Aug 24 11:48:58 2017
 This module contains the most common high-level data wranglers.
 """
 
-import numpy as np
 import tensorflow as tf
 
 from . import utilities as util
@@ -313,70 +312,3 @@ class FromFileTF(WranglerTF):
                     tf.feature_column.indicator_column(cat_col))
 
         self.datasets['wrangled'] = self.dataset
-
-
-class RotationMatrix(WranglerTF):
-
-    def __init__(
-            self, theta, num_examples, dim=2, batch_size=5):
-        """
-        This dataset consists of vectors of dimension ``dim`` as inputs and the
-        rotated vectors by an angle ``theta`` as outputs.
-
-        Parameters
-        ----------
-        theta: float
-            Angle of rotation
-        num_examples: int
-            Number of examples
-        dim: int
-            Dimension of the vectors
-        batch_size:
-            Batch size
-        """
-
-        assert dim == 2  # Only allow 2-D vectors for now.
-
-        super().__init__(
-            batch_size=batch_size,
-            theta=theta,
-            dim=dim,
-            num_examples=num_examples)
-
-    def acquire(self):
-
-        # Rotation matrix
-        self.matrix = np.array(
-            [[np.cos(self.theta), -np.sin(self.theta)],
-             [np.sin(self.theta), np.cos(self.theta)]])
-
-        # Input vector
-        x = np.random.rand(self.num_examples, self.dim)
-
-        # Output vector resulting from the multiplication
-        y = np.apply_along_axis(self.rotate, 1, x)
-
-        self.dataset = tf.data.Dataset.from_tensor_slices(
-            (x, y)).batch(self.batch_size)
-
-    def rotate(self, x, R=None):
-        """
-        Parameters
-        ----------
-        x: numpy.array
-            Input vector
-        R: numpy.array, None
-            Rotation matrix
-
-        Return
-        ------
-        rotated_x: numpy.array
-            Rotated vector
-        """
-
-        if R is None:
-            R = self.matrix
-
-        rotated_x = np.matmul(R, x)
-
-        return rotated_x

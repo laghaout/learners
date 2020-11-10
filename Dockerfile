@@ -19,7 +19,7 @@ RUN apt -y install tree
 # Install the package
 COPY setup.py .
 COPY learners/ learners
-COPY data/ data
+#COPY data/ data  # REMOVE
 RUN pip install .
 COPY main.py .
 

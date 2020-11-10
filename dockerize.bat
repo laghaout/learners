@@ -1,6 +1,5 @@
 # Clean up artifacts from emacs.
-rm *~
-rm learners/*~
+./clean.bat
 
 # Format the code as per PEP8.
 autopep8 --in-place --aggressive --aggressive ./*.py

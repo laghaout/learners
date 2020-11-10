@@ -12,7 +12,7 @@ TODO code:
 - Hyperparameter optimization
 - Thorough comments
 - Use JSON files for inputs (as a last step).
-- Capture the stdout into a file under the learner_dir which is timestamped and
+- Capture the stdout into a file under the lesson_dir which is timestamped and
   concatenated.
 
 TODO documentation:
@@ -52,7 +52,7 @@ def main(learner='learner',
     Parameters
     ----------
     learner: Learner, str
-        Learner to be instantiated.
+        Learner to be invoked or instantiated.
     explore: bool
         Explore the data?
     select: bool
@@ -74,63 +74,14 @@ def main(learner='learner',
     [learner, explore, select, train, test, serve] = util.set_argv(
         [learner, explore, select, train, test, serve], sys.argv)
 
-    # Instantiate one of the predefined learners whenever a string is provided.
+    # Instantiate the default learner.
     if isinstance(learner, str):
-        learner = instantiate(learner)
+        learner = lea.LearnerChild(learner, some_argument='my_argument')
 
     learner.run(explore, select, train, test, serve)
 
     return learner
 
 
-def instantiate(learner):
-    """
-    Whenever a learner is referred to by its (string) name, it means that the
-    it is predifined.
-
-    TODO: Would it be more elegant to replace this by a factory method?
-
-    Parameters
-    ----------
-    learner: str
-        Name of the learner to instantiate.
-
-    Return
-    ------
-    learner: learner.Learner
-        Instantiated learner.
-    """
-
-    assert isinstance(learner, str)
-
-    # Predict the incidence of heart diseases.
-    if learner == 'heart':
-        learner = lea.Heart(learner_dir=learner)
-
-    # Predict the price of housing in Boston.
-    elif learner == 'boston':
-        learner = lea.Boston(learner_dir=learner)
-
-    # Infer the rotation matrix that maps a vector to another.
-    elif learner == 'rotation_matrix':
-        learner = lea.RotationMatrix(learner)
-
-    # Learn the best path over a frozen lake.
-    elif learner in ['FrozenLake-v0', 'FrozenLake8x8-v0']:
-        learner = lea.FrozenLake(learner)
-
-    # Learn the best propultion strategy to climb a mountain.
-    elif learner in ['MountainCar-v0']:
-        learner = lea.MountainCar(learner)
-
-    else:
-        print(f'WARNING: There is no learner named ``{learner}\'\'.',
-              'Running the default template instead.')
-        learner = lea.LearnerChild(learner, some_argument='my_argument')
-
-    return learner
-
-
 if __name__ == '__main__':
     learner = main()
-    metrics = learner.metrics
