@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='learners',
     version='dev',    # PyPI version automatically set by CI/CD tool
-    author='laghaout',
+    author='Amine Laghaout',
     description='Object-oriented learners for machine learning.',
     install_requires=[
         'seaborn>=0.11.0',

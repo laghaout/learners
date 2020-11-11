@@ -38,7 +38,6 @@ TODO requirements specification:
 - Visualization with Seaborn: https://www.tensorflow.org/tutorials/keras/regression
 """
 
-import sys
 import learners.learner as lea
 import learners.utilities as util
 
@@ -70,12 +69,9 @@ def main(learner='learner',
         Learner object.
     """
 
-    # Process the command-line arguments.
-    [learner, explore, select, train, test, serve] = util.set_argv(
-        [learner, explore, select, train, test, serve], sys.argv)
-
     # Instantiate the default learner.
     if isinstance(learner, str):
+        print('Launching the default learner...')
         learner = lea.LearnerChild(learner, some_argument='my_argument')
 
     learner.run(explore, select, train, test, serve)

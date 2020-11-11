@@ -1,13 +1,13 @@
-# Inherit from python 3.7 image
+# Inherit from python 3.7 image.
 FROM python:3.7-slim
 
-# Declare the workdir
+# Declare the working directory.
 WORKDIR /learners
 
-# Update to the latest version of pip
+# Update to the latest version of pip.
 RUN pip install --upgrade pip
 
-# Install requirements.txt
+# Install requirements.txt.
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 RUN apt update
@@ -16,13 +16,11 @@ RUN apt -y install less
 RUN apt -y install tk
 RUN apt -y install tree
 
-# Install the package
+# Install the package.
 COPY setup.py .
 COPY learners/ learners
-#COPY data/ data  # REMOVE
 RUN pip install .
 COPY main.py .
 
-# Default command to run when running container
-# We'll change this to actually run the analysis later
+# Default command upon running the container.
 #CMD ["bash", ". <some launcher>.bat"]
