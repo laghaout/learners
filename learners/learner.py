@@ -418,8 +418,10 @@ class SupervisedKeras(Supervised):
         super().serve()
 
         if 'serve' in self.data.dataset.keys():
-            self.metrics['serve'] = self.model.predict(
-                self.data.dataset['serve'])
+            runtime = timeit.default_timer()
+            self.metrics['serve'] = {
+                'prediction': self.model.predict(self.data.dataset['serve']),
+                'runtime': timeit.default_timer() - runtime}
         else:
             print('WARNING: There is no \'serve\' data.')
 
