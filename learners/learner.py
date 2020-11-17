@@ -26,7 +26,7 @@ class Learner:
             self,
             lesson_dir='learner',
             default_lesson_dir=['lessons'],
-            metrics={
+            report={
                 x: {} for x in [
                     'explore',
                     'select',
@@ -52,8 +52,8 @@ class Learner:
             ``default_lesson_dir`` is ignored).
         default_lesson_dir: list
             Relative path to the default parent directory.
-        metrics: dict
-            Default dictionary of metrics.
+        report: dict
+            Default dictionary of reports from the various stages.
         hyperparams: dict
             Dictionary of hyperparameters
         data_params: dict
@@ -74,7 +74,7 @@ class Learner:
 
         # Convert all the arguments to attributes.
         util.args_to_attributes(
-            self, lesson_dir=lesson_dir, metrics=metrics,
+            self, lesson_dir=lesson_dir, report=report,
             hyperparams=hyperparams, data_params=data_params,
             hyperparams_space=hyperparams_space,
             data_params_space=data_params_space,
@@ -289,16 +289,16 @@ class LearnerChild(Learner):
 
         super().explore()
 
-        print('- Explore the data ->  `self.metrics[\'explore\']`.')
-        # self.metrics['explore'] = ...
+        print('- Explore the data ->  `self.report[\'explore\']`.')
+        # self.report['explore'] = ...
 
     def select(self):
 
         super().select()
 
-        print('- Select a model -> `self.metrics[\'select\']`.')
+        print('- Select a model -> `self.report[\'select\']`.')
         # self.model = ...  # Update the model to be the best one so far.
-        # self.metrics['select'] = ...
+        # self.report['select'] = ...
 
     def select_report(self):
 
@@ -310,8 +310,8 @@ class LearnerChild(Learner):
 
         super().train()
 
-        print('- Train the model -> `self.metrics[\'train\']`.')
-        # self.metrics['train'] = ...
+        print('- Train the model -> `self.report[\'train\']`.')
+        # self.report['train'] = ...
 
     def train_report(self):
 
@@ -323,8 +323,8 @@ class LearnerChild(Learner):
 
         super().test()
 
-        print('- Test the model -> `self.metrics[\'test\']`.')
-        # self.metrics['test'] = ...
+        print('- Test the model -> `self.report[\'test\']`.')
+        # self.report['test'] = ...
 
     def test_report(self):
 
@@ -336,8 +336,8 @@ class LearnerChild(Learner):
 
         super().serve()
 
-        print('- Serve the model -> `self.metrics[\'serve\']`.')
-        # self.metrics['serve'] = ...
+        print('- Serve the model -> `self.report[\'serve\']`.')
+        # self.report['serve'] = ...
 
     def serve_report(self):
 
@@ -347,6 +347,9 @@ class LearnerChild(Learner):
 
 
 # %% Technology-specific parent classes.
+# WARNING: The classes below should not be inherited as they are likely to
+# change. Feel free to copy some of their content, but inherit directlt from
+# `Learner`.
 
 class SupervisedKeras(Supervised):
     """ Class for SupervisedKeras learning based on Keras. """
@@ -397,7 +400,7 @@ class SupervisedKeras(Supervised):
             callbacks=[tensorboard_callback],
         )
 
-        self.metrics['train'] = dict(
+        self.report['train'] = dict(
             history=self.model.history,
             runtime=timeit.default_timer() - runtime)
 
@@ -406,8 +409,8 @@ class SupervisedKeras(Supervised):
         super().test()
 
         if 'test' in self.data.dataset.keys():
-            self.metrics['test'] = dict(
-                zip(self.model.metrics_names + ['prediction'],
+            self.report['test'] = dict(
+                zip(self.model.report_names + ['prediction'],
                     self.model.evaluate(self.data.dataset['test']) +
                     [self.model.predict(self.data.dataset['test'])]))
         else:
@@ -419,7 +422,7 @@ class SupervisedKeras(Supervised):
 
         if 'serve' in self.data.dataset.keys():
             runtime = timeit.default_timer()
-            self.metrics['serve'] = {
+            self.report['serve'] = {
                 'prediction': self.model.predict(self.data.dataset['serve']),
                 'runtime': timeit.default_timer() - runtime}
         else:
@@ -480,7 +483,7 @@ class QTableDiscreteGym(ReinforcementGym):
             Discretization grid of the observation space
         """
 
-        metrics = {
+        report = {
             'train': {
                 'reward': [None] * num_episodes,
                 'exploration': [None] * num_episodes,
@@ -502,7 +505,7 @@ class QTableDiscreteGym(ReinforcementGym):
             exploration_decay_rate=exploration_decay_rate,
             q_table_displays=q_table_displays,
             discretization=discretization,
-            metrics=metrics,
+            reprot=report,
             **kwargs)
 
     def explore(self):
@@ -543,8 +546,8 @@ class QTableDiscreteGym(ReinforcementGym):
 
             # Initialize the episode.
             state = self.discretize(self.env.reset())
-            self.metrics['train']['reward'][episode] = []
-            self.metrics['train']['exploration'][episode] = []
+            self.report['train']['reward'][episode] = []
+            self.report['train']['exploration'][episode] = []
 
             # Display the Q-table at a certain frequency.
             self.display_summary(episode)
@@ -567,10 +570,10 @@ class QTableDiscreteGym(ReinforcementGym):
                 self.render(episode)
 
                 # Record the metrics.
-                self.metrics['train']['reward'][episode] += [reward]
-                self.metrics['train']['success'][episode] = success
+                self.report['train']['reward'][episode] += [reward]
+                self.report['train']['success'][episode] = success
                 if done or success:
-                    self.metrics['train']['steps'][episode] = step
+                    self.report['train']['steps'][episode] = step
                     break
                 else:
                     state = new_state
@@ -595,26 +598,26 @@ class QTableDiscreteGym(ReinforcementGym):
 
         vis.plot2D(
             range(self.num_episodes),
-            [sum(k) / len(k) for k in self.metrics['train']['exploration']],
+            [sum(k) / len(k) for k in self.report['train']['exploration']],
             xlabel='episode', ylabel='avg. exploration rate', smooth=[51, 1],
             save_as=os.path.join(
                 self.lesson_dir, 'train', 'avg. exploration rate.pdf'))
 
         vis.plot2D(
             range(self.num_episodes),
-            self.metrics['train']['success'],
+            self.report['train']['success'],
             xlabel='episode', ylabel='success', smooth=[51, 1],
             save_as=os.path.join(self.lesson_dir, 'train', 'success.pdf'))
 
         vis.plot2D(
             range(self.num_episodes),
-            self.metrics['train']['steps'],
+            self.report['train']['steps'],
             xlabel='episode', ylabel='steps', smooth=[51, 1],
             save_as=os.path.join(self.lesson_dir, 'train', 'steps.pdf'))
 
         vis.plot2D(
             range(self.num_episodes),
-            [sum(k) / len(k) for k in self.metrics['train']['reward']],
+            [sum(k) / len(k) for k in self.report['train']['reward']],
             xlabel='episode', ylabel='avg. cumulative reward', smooth=[51, 1],
             save_as=os.path.join(
                 self.lesson_dir, 'train', 'avg. cumulative reward.pdf'))
@@ -639,7 +642,7 @@ class QTableDiscreteGym(ReinforcementGym):
 
         print('========== TEST:')
 
-        self.metrics['test'] = {
+        self.report['test'] = {
             'steps': [self.max_steps_per_episode] * num_episodes,
             'reward': [None] * num_episodes,
             'success': [False] * num_episodes}
@@ -651,7 +654,7 @@ class QTableDiscreteGym(ReinforcementGym):
             state = self.env.reset()
             done = False
             self.render(None)
-            self.metrics['test']['reward'][episode] = []
+            self.report['test']['reward'][episode] = []
             time.sleep(sleep_time['episode'])
 
             for step in range(self.max_steps_per_episode):
@@ -662,7 +665,7 @@ class QTableDiscreteGym(ReinforcementGym):
                 # Take a new action.
                 state, reward, done, info = self.env.step(action)
                 success = self.check_success(reward, state)
-                self.metrics['test']['reward'][episode] += [reward]
+                self.report['test']['reward'][episode] += [reward]
 
                 # Show the current state of the environment.
                 self.render(None)
@@ -672,14 +675,14 @@ class QTableDiscreteGym(ReinforcementGym):
                     if success:
                         print(
                             f'**** Succeeded at step {step} with a cumulative reward of', sum(
-                                self.metrics['test']['reward'][episode]), '****')
-                        self.metrics['test']['success'][episode] = True
+                                self.report['test']['reward'][episode]), '****')
+                        self.report['test']['success'][episode] = True
                     else:
                         print(
                             f'**** Failed at step {step} with a cumulative reward of', sum(
-                                self.metrics['test']['reward'][episode]), '****')
+                                self.report['test']['reward'][episode]), '****')
                     time.sleep(sleep_time['result'])
-                    self.metrics['test']['steps'][episode] = step
+                    self.report['test']['steps'][episode] = step
                     break
 
         self.env.close()
@@ -688,10 +691,10 @@ class QTableDiscreteGym(ReinforcementGym):
 
         if np.random.uniform(0, 1) > self.exploration_rate:
             action = self.exploit(state)  # Exploit.
-            self.metrics['train']['exploration'][episode] += [False]
+            self.report['train']['exploration'][episode] += [False]
         else:
             action = self.env.action_space.sample()  # Explore.
-            self.metrics['train']['exploration'][episode] += [True]
+            self.report['train']['exploration'][episode] += [True]
 
         return action
 
