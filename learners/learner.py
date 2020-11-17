@@ -410,7 +410,7 @@ class SupervisedKeras(Supervised):
 
         if 'test' in self.data.dataset.keys():
             self.report['test'] = dict(
-                zip(self.model.report_names + ['prediction'],
+                zip(self.model.metrics_names + ['prediction'],
                     self.model.evaluate(self.data.dataset['test']) +
                     [self.model.predict(self.data.dataset['test'])]))
         else:
