@@ -167,9 +167,9 @@ class Learner:
 
         pass
 
-    def run(self,
-            explore=True, select=True, train=True, test=True, serve=True,
-            pause=False):
+    def __call__(self,
+                 explore=True, select=True, train=True, test=True, serve=True,
+                 pause=False):
         """
         Run the various stages of the learning.
 

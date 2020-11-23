@@ -105,6 +105,58 @@ def select_rows(df, specs):
     return df
 
 
+def rw_data(path, data=None, params=None):
+
+    extension = path.split('.')[-1].lower()
+
+    # Read
+    if data is None:
+
+        print(f'Reading `{path}`.')
+
+        if extension in ('yaml', 'yml'):
+            import yaml
+            if params is None:
+                params = dict(Loader=yaml.FullLoader)
+            data = yaml.load(open(path, 'rb'), **params)
+        elif extension in ('pickle', 'pkl'):
+            pass
+        elif extension in ('json'):
+            import json
+            data = json.load(open(path, 'rb'))
+        elif extension in ('hdf5', 'h5', 'hdf'):
+            pass
+        elif extension in ('csv'):
+            pass
+        else:
+            print('WARNING: No file format specified.')
+
+        return data
+
+    # Write
+    else:
+
+        print(f'Writing to `{path}`.')
+
+        if extension in ('yaml', 'yml'):
+            import yaml
+            yaml.dump(data, open(path, 'w'), default_flow_style=False)
+        elif extension in ('pickle', 'pkl'):
+            pass
+        elif extension in ('json'):
+            import json
+            json.dump(data, fp=open(path, 'w'))
+        elif extension in ('hdf5', 'h5', 'hdf'):
+            pass
+        elif extension in ('csv'):
+            pass
+        else:
+            print('WARNING: No file format specified.')
+            return False
+
+        return True
+
+
 def dict_json(x, y=None):
 
     # Save the dictionary ``x`` to a JSON ``y``.

@@ -74,7 +74,7 @@ def main(learner='learner',
         print('Launching the default learner...')
         learner = lea.LearnerChild(learner, some_argument='my_argument')
 
-    learner.run(explore, select, train, test, serve)
+    learner(explore, select, train, test, serve)
 
     return learner
 
