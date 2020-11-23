@@ -1,0 +1,59 @@
+Learner:
+  # Data
+  data: Wrangler object that holds the data used by the model
+  data_param_space: search space for the data
+  data_params: data parameters
+  # Model
+  hyperparam_space: search space for the hyperparameters
+  hyperparams: model hyperparameters
+  model: estimator (i.e., classifier, regressor, heuristic, etc.)
+  # Bookkeeping
+  lesson_dir: directory where a lesson is stored
+  # Reports
+  report:
+    explore:
+      correlation: (Pearson) correlation matrix with the target
+      statistics: statistical summary (typically using ``pandas.DataFrame.describe()``)
+      runtime: runtime for exploration (in seconds)
+    select:
+      metrics: multiindexed pandas DataFrame of metrics for each hyperparameter combination. See ``Learner.report.test`` for the metrics that may make up the columns of the DataFrame.
+      runtime: runtime for selection
+    serve:
+      prediction: predicted target
+      runtime: runtime for serving (in seconds)
+    test:
+      comparison: pandas DataFrame which compares the prediction with the actual values
+      metrics:
+        confusion: confusion matrix
+        loss: loss
+        F1-score: F1-score
+        accuracy: accuracy
+      runtime: runtime for training (in seconds)
+    train:
+      comparison: pandas DataFrame which compares the prediction with the actual values
+      history:
+        loss: loss over all the epochs
+        accuracy: accuracy over all the epochs
+        val_loss: validation loss over all the epochs
+        val_accuracy: validation accuracy over all the epochs
+      runtime: runtime for training (in seconds)
+Wrangler:
+  data_source: path to the data or connection parameters to the database
+  dataset:
+    train: machine-readable data used for training
+    test: machine-readable data used for testing
+    serve: machine-readable data used for serving
+  datasets:
+    human-readable:
+      train: raw data used for training
+      test: raw data used for testing
+      serve: raw data used for serving     
+    embedded:
+      train: raw data used for training
+      test: raw data used for testing
+      serve: raw data used for serving
+    machine-readable:
+      train: machine-readable data used for training
+      test: machine-readable data data used for testing
+      serve: machine-readable data used for serving    
+
