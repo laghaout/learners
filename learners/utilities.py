@@ -114,22 +114,27 @@ def rw_data(path, data=None, params=None):
 
         print(f'Reading `{path}`.')
 
+        path = open(path, 'rb')
+
         if extension in ('yaml', 'yml'):
             import yaml
             if params is None:
                 params = dict(Loader=yaml.FullLoader)
-            data = yaml.load(open(path, 'rb'), **params)
+            data = yaml.load(path, **params)
         elif extension in ('pickle', 'pkl'):
-            pass
+            import pickle            
+            data = pickle.load(path)            
         elif extension in ('json'):
             import json
-            data = json.load(open(path, 'rb'))
+            data = json.load(path)
         elif extension in ('hdf5', 'h5', 'hdf'):
             pass
         elif extension in ('csv'):
             pass
         else:
             print('WARNING: No file format specified.')
+            
+        path.close()
 
         return data
 
@@ -138,14 +143,17 @@ def rw_data(path, data=None, params=None):
 
         print(f'Writing to `{path}`.')
 
+        path = open(path, 'wb')
+
         if extension in ('yaml', 'yml'):
             import yaml
-            yaml.dump(data, open(path, 'w'), default_flow_style=False)
+            yaml.dump(data, path, default_flow_style=False)
         elif extension in ('pickle', 'pkl'):
-            pass
+            import pickle
+            pickle.dump(data, path)
         elif extension in ('json'):
             import json
-            json.dump(data, fp=open(path, 'w'))
+            json.dump(data, fp=path)
         elif extension in ('hdf5', 'h5', 'hdf'):
             pass
         elif extension in ('csv'):
@@ -153,6 +161,8 @@ def rw_data(path, data=None, params=None):
         else:
             print('WARNING: No file format specified.')
             return False
+        
+        path.close()
 
         return True
 
