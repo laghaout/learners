@@ -2,18 +2,18 @@ from setuptools import setup
 
 setup(
     name='learners',
-    version='dev',    # PyPI version automatically set by CI/CD tool
+    version='dev',
     author='Amine Laghaout',
     description='Object-oriented learners for machine learning.',
     install_requires=[
         'seaborn>=0.11.0',
-        'matplotlib>=3.3.0',
-        'numpy>=1.19.1',
-        'pandas>=1.1.1'
+        'matplotlib>=3.3.2',
+        'numpy>=1.19.2',
+        'pandas>=1.1.3'
         'scikit-learn>=0.23.2',
-        'tensorflow>=2.1.0'
+        'tensorflow>=2.4.1'
     ],
     packages=['learners'],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False,
 )

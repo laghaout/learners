@@ -14,6 +14,7 @@ TODO code:
 - Use JSON files for inputs (as a last step).
 - Capture the stdout into a file under the lesson_dir which is timestamped and
   concatenated.
+- Include a Makefile for Docker
 
 TODO documentation:
 

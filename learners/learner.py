@@ -6,7 +6,7 @@ Created on Thu Aug 24 11:48:58 2017
 @author: Amine Laghaout
 """
 
-import gym
+#import gym
 import os
 import matplotlib.pyplot as plt
 import numpy as np
