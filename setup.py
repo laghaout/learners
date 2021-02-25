@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name='learners',
-    version='dev',
+    version='0.0.0',
     author='Amine Laghaout',
     description='Object-oriented learners for machine learning.',
     install_requires=[
@@ -13,7 +13,9 @@ setup(
         'scikit-learn>=0.23.2',
         'tensorflow>=2.4.1'
     ],
-    packages=['learners'],
+    packages=find_packages(exclude=('test*',)),
     python_requires=">=3.8",
     zip_safe=False,
+    entry_points={
+        'console_scripts': ['learners-mock = learners.main:main', ]}
 )

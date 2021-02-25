@@ -39,8 +39,10 @@ TODO requirements specification:
 - Visualization with Seaborn: https://www.tensorflow.org/tutorials/keras/regression
 """
 
-import learners.learner as lea
-import learners.utilities as util
+# import learners.learner as lea
+
+from . import learner as lea
+
 
 
 def main(learner='learner',
