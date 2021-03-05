@@ -7,9 +7,17 @@ WORKDIR /learners
 # Update to the latest version of pip.
 RUN pip install --upgrade pip
 
+RUN pip install autopep8
+RUN pip install seaborn
+RUN pip install matplotlib
+RUN pip install numpy
+RUN pip install pandas
+RUN pip install scikit-learn
+RUN pip install tensorflow
+
 # Install requirements.txt.
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+#COPY requirements.txt .
+#RUN pip install -r requirements.txt
 RUN apt update
 RUN apt -y install emacs-nox
 RUN apt -y install less
