@@ -191,7 +191,7 @@ class Learner:
                 input('Press Enter to continue.')
 
         self.design()
-                
+
         if select:
             self.select()
             self.select_report()
