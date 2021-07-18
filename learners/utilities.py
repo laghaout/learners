@@ -122,8 +122,8 @@ def rw_data(path, data=None, params=None):
                 params = dict(Loader=yaml.FullLoader)
             data = yaml.load(path, **params)
         elif extension in ('pickle', 'pkl'):
-            import pickle            
-            data = pickle.load(path)            
+            import pickle
+            data = pickle.load(path)
         elif extension in ('json'):
             import json
             data = json.load(path)
@@ -133,7 +133,7 @@ def rw_data(path, data=None, params=None):
             pass
         else:
             print('WARNING: No file format specified.')
-            
+
         path.close()
 
         return data
@@ -161,7 +161,7 @@ def rw_data(path, data=None, params=None):
         else:
             print('WARNING: No file format specified.')
             return False
-        
+
         path.close()
 
         return True

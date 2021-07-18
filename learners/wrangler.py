@@ -66,6 +66,11 @@ class Wrangler:
 
         return True
 
+    def explore(self):
+        """ Explore the data, either visually or statistically. """
+
+        pass
+
     def wrangle(self):
         """
         Data wrangling. This transforms the raw, human-readable data to the
@@ -78,11 +83,6 @@ class Wrangler:
 
     def view(self):
         """ View one or several batches of data. """
-
-        pass
-
-    def explore(self):
-        """ Explore the data, either visually or statistically. """
 
         pass
 

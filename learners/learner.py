@@ -80,15 +80,6 @@ class Learner:
             data_params_space=data_params_space,
             **kwargs)
 
-        print('======================================== [start]',
-              f'{self.lesson_dir}\n')
-
-        # Wrangle the data or set up the environment.
-        self.wrangle()
-
-        # Design the model and specify the metrics.
-        self.design()
-
     def wrangle(self):
         """
         Wrangle the data or set up the environment so as to generate
@@ -156,7 +147,7 @@ class Learner:
 
     def save(self, filename='learner.pkl'):
 
-        import pickle
+        # import pickle
 
         # filepath = os.path.join(self.lesson_dir, filename)
         # try:
@@ -189,11 +180,18 @@ class Learner:
             Pause in between runs?
         """
 
-        # Determine which stages of the pipeline to execute.
+        print('======================================== [start]',
+              f'{self.lesson_dir}\n')
+
+        self.wrangle()
+
         if explore:
             self.explore()
             if pause:
                 input('Press Enter to continue.')
+
+        self.design()
+                
         if select:
             self.select()
             self.select_report()

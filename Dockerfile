@@ -28,7 +28,7 @@ RUN apt -y install tree
 COPY setup.py .
 COPY learners/ learners
 RUN pip install .
-COPY main.py .
+#COPY main.py .
 
 # Default command upon running the container.
 #CMD ["bash", ". <some launcher>.bat"]
