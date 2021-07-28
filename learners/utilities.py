@@ -12,6 +12,68 @@ import tensorflow as tf
 from tensorflow.keras import layers
 
 
+def version_table(print2screen=True):
+    """
+    This function returns the version numbers of the various pieces of software
+    with which this module was tested.
+    Notes
+    -----
+    In order for Hyperopt 0.1 to work, ``networkx`` had to be downgraded by
+    running ``pip install networkx==1.11``. This is due to a bug that arises
+    with Hyperopt when version 2.0 of ``networkx`` is installed.
+    Also include:
+        - conda install plotly
+    Parameters
+    ----------
+    print2screen : bool
+        Print the version table to screen (``True``) or return it as a
+        dictionary (``False``)?
+    Returns
+    -------
+    version_table : dict
+        Dictionary containing the version table
+    """
+
+    import cpuinfo  # python -m pip install -U py-cpuinfo
+    import platform
+
+    from matplotlib import __version__ as plt_version
+    from numpy import __version__ as np_version
+    from pandas import __version__ as pd_version
+    from sklearn import __version__ as sk_version
+    from sys import version_info
+    from tensorflow import __version__ as tf_version
+
+    version_table = {
+        'Python': ('3.9.2', '.'.join(str(v) for v in version_info[0:3])),
+        'TensorFlow.': ('2.5.0', tf_version),
+        'NumPy': ('1.19.5', np_version),
+        'matplotlib': ('3.4.2', plt_version),
+        'sklearn': ('0.24.2', sk_version),
+        'PyQt5': ('5.6.2', None),
+        'pandas': ('1.3.1', pd_version),
+        'OS': ('Linux-5.10.0-7-amd64-x86_64-with-glibc2.10',
+               platform.platform()),
+        'CPU': ('Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz',
+                cpuinfo.get_cpu_info()['brand_raw']),
+        'CUDA': ('8.0.44', None),
+        'GPU': ('NVIDIA GeForce GTX', None)}
+
+    if print2screen:
+
+        # Maximum length of the software names
+        pad = max(map(lambda x: len(x), version_table))
+
+        # Print the table.
+        print('software'.rjust(pad), ': baseline', sep='')
+        print(''.rjust(pad), '  current', sep='')
+        for k in sorted(version_table.keys()):
+            print(k.rjust(pad), ': ', version_table[k][0], sep='')
+            print(''.rjust(pad), '  ', version_table[k][1], sep='')
+
+    return version_table
+
+
 def set_argv(defaults, argv):
     """
     This utility function is used to overwrite the default list of arguments
