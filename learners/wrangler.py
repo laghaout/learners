@@ -295,20 +295,20 @@ class FromFileTF(WranglerTF):
         self.datasets['raw'] = self.dataset
 
         # Numeric data
-        if hasattr(self, 'numeric_features'):
+        if hasattr(self, 'features_numeric'):
             self.dataset = self.dataset.map(
                 util.PackNumericFeatures(self.numeric_features))
-            self.numeric_data = tf.feature_column.numeric_column(
+            self.data_numeric = tf.feature_column.numeric_column(
                 'numeric', shape=[len(self.numeric_features)])
-            self.numeric_data = [self.numeric_data]
+            self.data_numeric = [self.data_numeric]
 
         # Categorical data
-        if hasattr(self, 'categories'):
-            self.categorical_data = []
+        if hasattr(self, 'features_categorical'):
+            self.data_categorical = []
             for feature, vocab in self.categories.items():
                 cat_col = tf.feature_column.categorical_column_with_vocabulary_list(
                     key=feature, vocabulary_list=vocab)
-                self.categorical_data.append(
+                self.data_categorical.append(
                     tf.feature_column.indicator_column(cat_col))
 
         self.datasets['wrangled'] = self.dataset
