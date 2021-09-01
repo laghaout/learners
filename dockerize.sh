@@ -1,7 +1,7 @@
 IMAGE_NAME=learners
 
 # Clean up artifacts.
-./clean.bat
+./clean.sh
 
 # Format the code as per PEP8.
 {

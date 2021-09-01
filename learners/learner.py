@@ -89,8 +89,8 @@ class Learner:
         print('========== WRANGLE:')
 
     def design(self):
-        """ 
-        Design the model. Any feature engineering that comes after the 
+        """
+        Design the model. Any feature engineering that comes after the
         exploration may also be included here.
         """
 

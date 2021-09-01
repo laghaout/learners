@@ -297,15 +297,15 @@ class FromFileTF(WranglerTF):
         # Numeric data
         if hasattr(self, 'features_numeric'):
             self.dataset = self.dataset.map(
-                util.PackNumericFeatures(self.numeric_features))
+                util.PackNumericFeatures(self.features_numeric))
             self.data_numeric = tf.feature_column.numeric_column(
-                'numeric', shape=[len(self.numeric_features)])
+                'numeric', shape=[len(self.features_numeric)])
             self.data_numeric = [self.data_numeric]
 
         # Categorical data
         if hasattr(self, 'features_categorical'):
             self.data_categorical = []
-            for feature, vocab in self.categories.items():
+            for feature, vocab in self.features_categorical.items():
                 cat_col = tf.feature_column.categorical_column_with_vocabulary_list(
                     key=feature, vocabulary_list=vocab)
                 self.data_categorical.append(
