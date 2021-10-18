@@ -6,6 +6,7 @@ Created on Thu Aug 24 11:48:58 2017
 @author: Amine Laghaout
 """
 
+import os
 import json
 import pandas as pd
 import tensorflow as tf
@@ -46,7 +47,7 @@ def version_table(print2screen=True):
 
     version_table = {
         'Python': ('3.9.2', '.'.join(str(v) for v in version_info[0:3])),
-        'TensorFlow.': ('2.5.0', tf_version),
+        'TensorFlow.': ('2.6.0', tf_version),
         'NumPy': ('1.19.5', np_version),
         'matplotlib': ('3.4.2', plt_version),
         'sklearn': ('0.24.2', sk_version),
@@ -243,6 +244,48 @@ def dict_json(x, y=None):
             x = [x]
 
         return json.load(open(x, 'rb'))
+
+
+def fetch_object(path_from_ref_dir, attributes=None, ref_dir=['/', 'home']):
+    """
+    Fetch an object from its context.
+
+    Parameters
+    ----------
+    path_from_ref_dir : list
+        Path to the object from the reference directory.
+    attribute: str, list of str, None
+        If a string, return only the attribute of the object which is labeled
+        with that string. If it is a list, return all the attributes in that
+        list as a dictrionary. The default is None, in which case the whole
+        object is returned.
+    ref_dir : TYPE, optional
+        Path to the reference directory. The default is ['/', 'home'].
+
+    Returns
+    -------
+    saved_object : object
+        Objecty to be returned
+    """
+
+    curr_dir = os.getcwd()
+
+    # Temporarily move to home to view the pickled object in its context.
+    os.chdir(os.path.join(*ref_dir))
+
+    # Load the pickled object.
+    saved_object = rw_data(os.path.join(*path_from_ref_dir))
+
+    # Move back to the current map you're implementing
+    os.chdir(curr_dir)
+
+    if attributes is None:
+        return saved_object
+    elif isinstance(attributes, str):
+        return getattr(saved_object, attributes)
+    elif isinstance(attributes, list):
+        return {attribute: getattr(saved_object, attribute)
+                for attribute in attributes}
 
 
 def assemble_dataframe(batch, label, label_name='label'):

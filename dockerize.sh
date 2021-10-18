@@ -1,3 +1,5 @@
+#!/bin/sh
+
 IMAGE_NAME=learners
 
 # Clean up artifacts.

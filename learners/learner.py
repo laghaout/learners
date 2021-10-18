@@ -4,6 +4,9 @@
 Created on Thu Aug 24 11:48:58 2017
 
 @author: Amine Laghaout
+
+TODO
+- shellcheck all the *.sh scripts.
 """
 
 #import gym

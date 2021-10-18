@@ -1,4 +1,6 @@
-rm *~
+#!/bin/sh
+
+rm ./*~
 rm .gitignore~
 rm -rf ./learners/*~
 rm -rf ./lessons/
