@@ -44,7 +44,7 @@ class Explorer:
         print(f'Loading `{self.source}`...')
         self.data = pd.read_csv(
             self.source, delimiter=self.delimiter, nrows=self.nrows,
-            usecols=self.usecols)
+            usecols=self.usecols, index_col=self.index_col)
 
         # Shuffle the rows?
         if hasattr(self, 'shuffle'):
