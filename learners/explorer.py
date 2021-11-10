@@ -68,11 +68,17 @@ class Explorer:
             Pathname for saving the profile report.
         """
 
+        if self.index_col is not None:
+            self.data[self.index_col] = self.data.index
+
         self.report = pd.concat([
             pd.DataFrame({'filled': self.data.notna().mean()}),
             pd.DataFrame({'dtypes': self.data.dtypes}),
             self.data.describe(
                 include='all', datetime_is_numeric=True).T], axis=1)
+
+        if self.index_col is not None:
+            del self.data[self.index_col]
 
         if isinstance(profile_report, str):
             self.profile_report = ProfileReport(self.data)
