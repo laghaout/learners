@@ -38,6 +38,7 @@ def version_table(print2screen=True):
     import cpuinfo  # python -m pip install -U py-cpuinfo
     import platform
 
+    from dcor import __version_ as dco_version
     from matplotlib import __version__ as plt_version
     from numpy import __version__ as np_version
     from pandas import __version__ as pd_version
@@ -50,9 +51,10 @@ def version_table(print2screen=True):
         'TensorFlow.': ('2.6.0', tf_version),
         'NumPy': ('1.19.5', np_version),
         'matplotlib': ('3.4.2', plt_version),
-        'sklearn': ('0.24.2', sk_version),
+        'sklearn': ('1.0.2', sk_version),
         'PyQt5': ('5.6.2', None),
         'pandas': ('1.3.1', pd_version),
+        'dcor': ('0.0', dco_version),
         'OS': ('Linux-5.10.0-7-amd64-x86_64-with-glibc2.10',
                platform.platform()),
         'CPU': ('Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz',

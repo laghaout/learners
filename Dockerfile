@@ -22,6 +22,8 @@ RUN pip3 install numpy
 RUN pip3 install pandas
 RUN pip3 install scikit-learn
 RUN pip3 install py-cpuinfo
+#RUN pip3 install sequana --upgrade
+RUN pip3 install dcor
 
 # Install the package.
 COPY setup.py .

@@ -14,13 +14,13 @@ import numpy as np
 
 
 def plot_correlation_matrix(
-        data, dir_path='.', filename='correlation_matrix.pdf'):
+        corr, dir_path='.', filename='correlation_matrix.pdf'):
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
     # Generate a mask for the upper triangle
-    mask = np.triu(np.ones_like(data, dtype=bool))
+    mask = np.triu(np.ones_like(corr, dtype=bool))
 
     # Set up the matplotlib figure
     f, ax = plt.subplots(figsize=(11, 9))
@@ -29,7 +29,7 @@ def plot_correlation_matrix(
     cmap = sns.diverging_palette(230, 20, as_cmap=True)
 
     # Draw the heatmap with the mask and correct aspect ratio
-    sns.heatmap(data, mask=mask, cmap=cmap, vmax=.3, center=0,
+    sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
                 square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
     if filename is not None:
@@ -39,8 +39,8 @@ def plot_correlation_matrix(
 
 
 def plot_pairgrid(
-        data, hue=None, dir_path='.', filename='pairgrid.pdf',
-        alpha=1):
+        data, dir_path='.', filename='pairgrid.pdf', hue=None,
+        alpha=1, annotate_distance_corr=True):
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -65,10 +65,37 @@ def plot_pairgrid(
     g.map_lower(
         plt.scatter, linewidths=1,
         edgecolor='w', s=90, alpha=alpha)
+    if annotate_distance_corr:
+        g.map_lower(corrfunc)
     g.map_diag(sns.histplot, kde=True, lw=4, legend=False)
     g.map_upper(sns.kdeplot, cmap="Blues_d", warn_singular=False)
     # g.map_upper(sns.histplot, cumulative=True, legend=False)
     g.add_legend()
+
+    if filename is not None:
+        plt.savefig(
+            os.path.join(dir_path, filename),
+            bbox_inches='tight')
+
+
+def plot_correlations(corr, dir_path='.', filename='correlations.pdf'):
+
+    try:
+        from sequana.viz import corrplot
+    except BaseException:
+        print('WARNING: Could not import sequana.viz.')
+        return None
+
+    c = corrplot.Corrplot(corr)
+    c.plot(
+        method='ellipse',
+        cmap='PRGn_r',
+        shrink=1,
+        rotation=45,
+        upper='text',
+        lower='ellipse')
+    fig = plt.gcf()
+    fig.set_size_inches(10, 8)
 
     if filename is not None:
         plt.savefig(
@@ -165,6 +192,33 @@ def plot_confusion_matrix(cm, classes,
 
     plt.show()
     plt.clf()
+
+
+def dist_corr(X, Y, pval=True, nruns=2000):
+    """ Distance correlation with p-value from bootstrapping
+    """
+    import dcor
+
+    dc = dcor.distance_correlation(X, Y)
+    pv = dcor.independence.distance_covariance_test(
+        X, Y, exponent=1.0, num_resamples=nruns)[0]
+    if pval:
+        return (dc, pv)
+    else:
+        return dc
+
+
+def corrfunc(x, y, **kws):
+
+    d, p = dist_corr(x, y)
+    #print("{:.4f}".format(d), "{:.4f}".format(p))
+    if p > 0.1:
+        pclr = 'Darkgray'
+    else:
+        pclr = 'Darkblue'
+    ax = plt.gca()
+    ax.annotate("DC = {:.2f}".format(d), xy=(.1, 0.99), xycoords=ax.transAxes,
+                color=pclr, fontsize=14)
 
 
 def plot2D(x, y, linewidth=3, show=True, marker=None, legend=None, xlabel='',
