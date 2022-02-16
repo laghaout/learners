@@ -6,9 +6,74 @@ Created on Thu Aug 24 11:48:58 2017
 @author: Amine Laghaout
 """
 
+import os
+import seaborn as sns
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
+
+
+def plot_correlation_matrix(
+        data, dir_path='.', filename='correlation_matrix.pdf'):
+
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+    # Generate a mask for the upper triangle
+    mask = np.triu(np.ones_like(data, dtype=bool))
+
+    # Set up the matplotlib figure
+    f, ax = plt.subplots(figsize=(11, 9))
+
+    # Generate a custom diverging colormap
+    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+
+    # Draw the heatmap with the mask and correct aspect ratio
+    sns.heatmap(data, mask=mask, cmap=cmap, vmax=.3, center=0,
+                square=True, linewidths=.5, cbar_kws={"shrink": .5})
+
+    if filename is not None:
+        plt.savefig(
+            os.path.join(dir_path, filename),
+            bbox_inches='tight')
+
+
+def plot_pairgrid(
+        data, hue=None, dir_path='.', filename='pairgrid.pdf',
+        alpha=1):
+
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+    plt.rcParams["axes.labelsize"] = 18
+    g = sns.PairGrid(
+        data, diag_sharey=False,
+        # TODO: Derive a boolean from the overall label.
+        hue=hue,
+    )
+
+    # Rotate the labels.
+    for ax in g.axes.flatten():
+        # rotate x axis labels
+        ax.set_xlabel(ax.get_xlabel(), rotation=45)
+        # rotate y axis labels
+        ax.set_ylabel(ax.get_ylabel(), rotation=0)
+        # set y labels alignment
+        ax.yaxis.get_label().set_horizontalalignment('right')
+        ax.xaxis.get_label().set_horizontalalignment('right')
+
+    g.map_lower(
+        plt.scatter, linewidths=1,
+        edgecolor='w', s=90, alpha=alpha)
+    g.map_diag(sns.histplot, kde=True, lw=4, legend=False)
+    g.map_upper(sns.kdeplot, cmap="Blues_d", warn_singular=False)
+    # g.map_upper(sns.histplot, cumulative=True, legend=False)
+    g.add_legend()
+
+    if filename is not None:
+        plt.savefig(
+            os.path.join(dir_path, filename),
+            bbox_inches='tight')
 
 
 def plot_time_series(
