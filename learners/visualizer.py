@@ -324,3 +324,19 @@ def plot2D(x, y, linewidth=3, show=True, marker=None, legend=None, xlabel='',
         plt.show()
 
     plt.clf()
+    
+# %%
+
+import pandas as pd
+
+def read(data):
+    data = pd.read_csv(
+        data,
+        delimiter='\t',
+        nrows=1000)
+
+    columns = data.columns
+    desc = data.describe()
+    print(data.head())
+    
+    return desc, columns, data
