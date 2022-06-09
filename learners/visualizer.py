@@ -6,6 +6,7 @@ Created on Thu Aug 24 11:48:58 2017
 @author: Amine Laghaout
 """
 
+import pandas as pd
 import os
 import seaborn as sns
 import itertools
@@ -324,10 +325,9 @@ def plot2D(x, y, linewidth=3, show=True, marker=None, legend=None, xlabel='',
         plt.show()
 
     plt.clf()
-    
+
 # %%
 
-import pandas as pd
 
 def read(data):
     data = pd.read_csv(
@@ -338,5 +338,5 @@ def read(data):
     columns = data.columns
     desc = data.describe()
     print(data.head())
-    
+
     return desc, columns, data

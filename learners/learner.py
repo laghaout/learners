@@ -151,18 +151,23 @@ class Learner:
 
         print('\n===== Serve report:')
 
-    def save(self, filename='learner.pkl'):
+    def save(self, timestamp=True):
 
-        # import pickle
+        if timestamp is True:
+            timestamp = round(time.time())
 
-        # filepath = os.path.join(self.lesson_dir, filename)
-        # try:
-        #     pickle.dump(self, open(filepath, 'wb'))
-        #     print(f'Learner saved under `{filepath}`.')
-        # except BaseException:
-        #     print(f'WARNING: Could not save the learner under {filepath}.')
-
-        pass
+        # TODO: This causes the error "Can't pickle local object". Find a way
+        #       to save the learner object and not just the report.
+        try:
+            util.rw_data(
+                os.path.join(self.lesson_dir, f'learner{timestamp}.pkl'),
+                self)
+            print('✓ Saved the learner.')
+        except BaseException:
+            util.rw_data(
+                os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
+                self.report)
+            print('✓ Saved the report.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
