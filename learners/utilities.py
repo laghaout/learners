@@ -232,6 +232,29 @@ def rw_data(path, data=None, params=None):
         return True
 
 
+def score_to_label(score, threshold, smaller_label, larger_label):
+    """
+    Convert a score to either one of two labels based on a threshold.
+
+    Parameters
+    ----------
+    score : float
+        Score
+    threshold : float
+        Threshold
+    smaller_label : str
+        Label to return if the score is strictly smaller than the threshold
+    larger_label : TYPE
+        Label to return if the score is equal or greater than the threshold
+
+    Returns
+    -------
+    str
+        Label
+    """
+    return smaller_label if score < threshold else larger_label
+
+
 def dict_json(x, y=None):
 
     # Save the dictionary ``x`` to a JSON ``y``.

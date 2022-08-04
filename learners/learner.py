@@ -167,7 +167,8 @@ class Learner:
             util.rw_data(
                 os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
                 self.report)
-            print('✓ Saved the report.')
+            self.model.save(os.path.join(self.lesson_dir, f'model{timestamp}'))
+            print('✓ Saved the report and the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,

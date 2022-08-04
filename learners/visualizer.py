@@ -222,6 +222,41 @@ def corrfunc(x, y, **kws):
                 color=pclr, fontsize=14)
 
 
+def AUC_ROC_curve(actual, predicted, save_as=None):
+    """
+    Plot the ROC curve and return the AUC.
+
+    Parameters
+    ----------
+    actual : str
+        Actual labels
+    predicted : str
+        Predicted labels
+    save_as : str
+        Pathname where to store the ROC curve.
+
+    Returns
+    -------
+    AUC : float
+        Area Under the Curve
+    """
+
+    import sklearn as skl
+    from sklearn.metrics import RocCurveDisplay
+
+    # Plot the ROC curve.
+    RocCurveDisplay.from_predictions(actual, predicted)
+    if save_as is not None:
+        plt.savefig(save_as)
+    plt.show()
+    plt.close()
+
+    # Comput the AUC.
+    AUC = skl.metrics.roc_auc_score(actual, predicted)
+
+    return AUC
+
+
 def plot2D(x, y, linewidth=3, show=True, marker=None, legend=None, xlabel='',
            ylabel='', title='', fontsize=16, smooth=None, save_as=None,
            axis_range=None, grid=True, log=(False, False),
