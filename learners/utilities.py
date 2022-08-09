@@ -38,7 +38,7 @@ def version_table(print2screen=True):
     import cpuinfo  # python -m pip install -U py-cpuinfo
     import platform
 
-    from dcor import __version_ as dco_version
+    from dcor import __version__ as dco_version
     from matplotlib import __version__ as plt_version
     from numpy import __version__ as np_version
     from pandas import __version__ as pd_version
@@ -47,15 +47,15 @@ def version_table(print2screen=True):
     from tensorflow import __version__ as tf_version
 
     version_table = {
-        'Python': ('3.9.2', '.'.join(str(v) for v in version_info[0:3])),
-        'TensorFlow.': ('2.6.0', tf_version),
-        'NumPy': ('1.19.5', np_version),
-        'matplotlib': ('3.4.2', plt_version),
-        'sklearn': ('1.0.2', sk_version),
+        'Python': ('3.9.10', '.'.join(str(v) for v in version_info[0:3])),
+        'TensorFlow.': ('2.9.1', tf_version),
+        'NumPy': ('1.22.4', np_version),
+        'matplotlib': ('3.5.2', plt_version),
+        'sklearn': ('1.1.1', sk_version),
         'PyQt5': ('5.6.2', None),
-        'pandas': ('1.3.1', pd_version),
-        'dcor': ('0.0', dco_version),
-        'OS': ('Linux-5.10.0-7-amd64-x86_64-with-glibc2.10',
+        'pandas': ('1.4.3', pd_version),
+        'dcor': ('0.5.6', dco_version),
+        'OS': ('Linux-5.10.0-14-amd64-x86_64-with-glibc2.31',
                platform.platform()),
         'CPU': ('Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz',
                 cpuinfo.get_cpu_info()['brand_raw']),

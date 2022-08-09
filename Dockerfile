@@ -5,7 +5,8 @@ FROM python:3.9-slim
 WORKDIR /learners
 
 # Install Linux utilities.
-RUN apt update
+RUN apt -y update
+RUN apt -y upgrade
 RUN apt -y install emacs-nox
 RUN apt -y install less
 RUN apt -y install tk
