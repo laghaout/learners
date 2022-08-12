@@ -40,6 +40,7 @@ class Learner:
             data_params=None,
             hyperparams_space=None,
             data_params_space=None,
+            verbose=1,
             **kwargs):
         """
         Generic learner class.
@@ -81,6 +82,7 @@ class Learner:
             hyperparams=hyperparams, data_params=data_params,
             hyperparams_space=hyperparams_space,
             data_params_space=data_params_space,
+            verbose=verbose,
             **kwargs)
 
     def wrangle(self):
@@ -89,7 +91,8 @@ class Learner:
         ``self.data`` or ``self.env``, respectively.
         """
 
-        print('========== WRANGLE:')
+        if self.verbose is not False:
+            print('========== WRANGLE:')
 
     def design(self):
         """
@@ -97,19 +100,22 @@ class Learner:
         exploration may also be included here.
         """
 
-        print('\n========== DESIGN:')
+        if self.verbose is not False:
+            print('\n========== DESIGN:')
 
     def explore(self):
         """
         Explore the data.
         """
 
-        print('\n========== EXPLORE:')
+        if self.verbose is not False:
+            print('\n========== EXPLORE:')
 
     def select(self):
         """ Select the model. """
 
-        print('\n========== SELECT:')
+        if self.verbose is not False:
+            print('\n========== SELECT:')
 
         if self.hyperparams_space is None:
             print('WARNING: The hyperparameter space is not specified.',
@@ -119,37 +125,44 @@ class Learner:
     def select_report(self):
         """ Report on the model selection. """
 
-        print('\n===== Selection report:')
+        if self.verbose is not False:
+            print('\n===== Selection report:')
 
     def train(self):
         """ Train the model. """
 
-        print('\n========== TRAIN:')
+        if self.verbose is not False:
+            print('\n========== TRAIN:')
 
     def train_report(self):
         """ Report on the training. """
 
-        print('\n===== Train report:')
+        if self.verbose is not False:
+            print('\n===== Train report:')
 
     def test(self):
         """ Test the model. """
 
-        print('\n========== TEST:')
+        if self.verbose is not False:
+            print('\n========== TEST:')
 
     def test_report(self):
         """ Report on the testing. """
 
-        print('\n===== Test report:')
+        if self.verbose is not False:
+            print('\n===== Test report:')
 
     def serve(self):
         """ Serve the model. """
 
-        print('\n========== SERVE:')
+        if self.verbose is not False:
+            print('\n========== SERVE:')
 
     def serve_report(self):
         """ Report on the serving. """
 
-        print('\n===== Serve report:')
+        if self.verbose is not False:
+            print('\n===== Serve report:')
 
     def save(self, timestamp=True):
 
@@ -162,13 +175,15 @@ class Learner:
             util.rw_data(
                 os.path.join(self.lesson_dir, f'learner{timestamp}.pkl'),
                 self)
-            print('✓ Saved the learner.')
+            if self.verbose is not False:
+                print('✓ Saved the learner.')
         except BaseException:
             util.rw_data(
                 os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
                 self.report)
             self.model.save(os.path.join(self.lesson_dir, f'model{timestamp}'))
-            print('✓ Saved the report and the model.')
+            if self.verbose is not False:
+                print('✓ Saved the report and the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
@@ -192,8 +207,9 @@ class Learner:
             Pause in between runs?
         """
 
-        print('======================================== [start]',
-              f'{self.lesson_dir}\n')
+        if self.verbose is not False:
+            print('======================================== [start]',
+                  f'{self.lesson_dir}\n')
 
         self.wrangle()
 
@@ -224,8 +240,9 @@ class Learner:
             self.serve_report()
         self.save()
 
-        print('\n======================================== [end]',
-              f' {self.lesson_dir}')
+        if self.verbose is not False:
+            print('\n======================================== [end]',
+                  f' {self.lesson_dir}')
 
 
 class Supervised(Learner):
