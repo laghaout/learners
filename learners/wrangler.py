@@ -8,8 +8,6 @@ Created on Thu Aug 24 11:48:58 2017
 This module contains the most common high-level data wranglers.
 """
 
-import tensorflow as tf
-
 try:
     from . import utilities as util
 except BaseException:

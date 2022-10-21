@@ -181,19 +181,27 @@ class Learner:
 
         # TODO: This causes the error "Can't pickle local object". Find a way
         #       to save the learner object and not just the report.
-        try:
-            util.rw_data(
-                os.path.join(self.lesson_dir, f'learner{timestamp}.pkl'),
-                self)
-            if self.verbose is not False:
-                print('✓ Saved the learner.')
-        except BaseException:
-            util.rw_data(
-                os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
-                self.report)
-            self.model.save(os.path.join(self.lesson_dir, f'model{timestamp}'))
-            if self.verbose is not False:
-                print('✓ Saved the report and the model.')
+        # try:
+        #     util.rw_data(
+        #         os.path.join(self.lesson_dir, f'learner{timestamp}.pkl'),
+        #         self)
+        #     if self.verbose is not False:
+        #         print('✓ Saved the learner.')
+        # except BaseException:
+        #     util.rw_data(
+        #         os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
+        #         self.report)
+        #     try:  # Keras model
+        #         self.model.save(
+        #             os.path.join(
+        #                 self.lesson_dir,
+        #                 f'model{timestamp}'))
+        #     except BaseException:
+        #         util.rw_data(
+        #             os.path.join(self.lesson_dir, f'model{timestamp}.pkl'),
+        #             self)
+        #     if self.verbose is not False:
+        #         print('✓ Saved the report and the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
@@ -258,8 +266,7 @@ class Learner:
 
 # %% Run locally.
 
-
-if len(USER) > 0:
-    learner = Learner()
-    learner()
-    report = learner.report
+# if len(USER) > 0:
+#     learner = Learner()
+#     learner()
+#     report = learner.report
