@@ -14,6 +14,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def plot_tsne(
+        data, features, target, n_components=2, verbose=0, random_state=0,
+        nrows=None, title='', filename='t-SNE.pdf'):
+
+    from sklearn.manifold import TSNE
+
+    x = data[features].iloc[:nrows]
+    y = data[target].iloc[:nrows]
+
+    tsne = TSNE(
+        n_components=n_components, verbose=verbose, random_state=random_state)
+    z = tsne.fit_transform(x)
+
+    df = pd.DataFrame(
+        {'y': y, 'Component 1': z[:, 0], 'Component 2': z[:, 1]})
+
+    sns.scatterplot(
+        x="Component 1", y="Component 2", hue=df.y.tolist(),
+        palette=sns.color_palette("hls", len(set(y))),
+        data=df).set(title=title)
+    # print('KL-divergence:', tsne.kl_divergence_)
+
+    plt.savefig(filename)
+
+    return tsne
+
+
 def plot_correlation_matrix(
         corr, dir_path='.', filename='correlation_matrix.pdf'):
 

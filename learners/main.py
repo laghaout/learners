@@ -7,41 +7,46 @@ Created on Thu Aug 24 11:48:58 2017
 
 TODO code:
 
-- Create subfunctions for the numerical and categorical transformers.
-+ Place everything under ``hyperparams`` and ``data_params``.
-- Hyperparameter optimization
-- Thorough comments
-- Use JSON files for inputs (as a last step).
-- Capture the stdout into a file under the lesson_dir which is timestamped and
-  concatenated.
-- Include a Makefile for Docker
+- [x] Remove ``default_lesson_dir`` and keep ``lesson_dir`` only.
+- [ ] Add a feature engineering function in the wrangler and call the explorer twice the __call__.
+- [ ] Add a consolidate() to Wrangler that does the feature selection.
+- [ ] Create subfunctions for the numerical and categorical transformers.
+- [x] Place everything under ``hyperparams`` and ``data_params``.
+- [ ] Hyperparameter optimization
+- [ ] Thorough comments
+- [ ] Use JSON files for inputs (as a last step).
+- [ ] Capture the stdout into a file under the lesson_dir which is timestamped and concatenated.
+- [ ] Include a Makefile for Docker
 
 TODO documentation:
 
-- Create a table with technology and level of detail (taxonomy) as dimensions.
-- Detailed UML and diagram
-- Explain how the metrics are synonymous with results and they may also include
-  results (e.g., predictions, timing metrics)
-- Explain how the generic is separate from the detailed. I'll maintain the
-  generic
-- File structure
-- TensorBoard
-- Demos
-- Go over the metrics
-- Warning about Scikit-learn: Not scalable
-- Provide some feedback.
+- [ ] Create a table with technology and level of detail (taxonomy) as dimensions.
+- [ ] Detailed UML and diagram
+- [ ] Explain how the metrics are synonymous with results and they may also include results (e.g., predictions, timing metrics)
+- [ ] Explain how the generic is separate from the detailed. I'll maintain the generic
+- [ ] File structure
+- [ ] TensorBoard
+- [ ] Demos
+- [ ] Go over the metrics
+- [ ] Warning about Scikit-learn: Not scalable
+- [ ] Provide some feedback.
 
 TODO requirements specification:
 
-- Data with td.data.Dataset
-- tf.keras
-- Exploration: Pearson correlation heatmap
-- Visualization with Seaborn: https://www.tensorflow.org/tutorials/keras/regression
+- [ ] Data with td.data.Dataset
+- [ ] tf.keras
+- [ ] Exploration: Pearson correlation heatmap
+- [ ] Visualization with Seaborn: https://www.tensorflow.org/tutorials/keras/regression
+
 """
 
-# import learners.learner as lea
-
-from . import learner as lea
+try:
+    USER = ''
+    from . import learner as lea
+except BaseException:
+    import getpass
+    USER = getpass.getuser()
+    import learner as lea
 
 
 def main(learner='learner',
@@ -72,10 +77,7 @@ def main(learner='learner',
     """
 
     # Instantiate the default learner.
-    if isinstance(learner, str):
-        print('Launching the default learner...')
-        learner = lea.LearnerChild(learner, some_argument='my_argument')
-
+    learner = lea.Learner(some_argument='my_argument')
     learner(explore, select, train, test, serve)
 
     return learner
