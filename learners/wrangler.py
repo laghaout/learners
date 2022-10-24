@@ -8,6 +8,9 @@ Created on Thu Aug 24 11:48:58 2017
 This module contains the most common high-level data wranglers.
 """
 
+import os
+import time
+
 try:
     from . import utilities as util
 except BaseException:
@@ -63,24 +66,27 @@ class Wrangler:
         assembled.
         """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Acquiring the data…')
+
+        pass  # Continue in child class.
 
     def validate(self):
         """ Validate the data. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Validating the data…')
 
+        # Assume the validation is passed by default.
         return True
 
-    def explore(self):
-        """ Explore the data, either visually or statistically. """
+        pass  # Continue in child class.
 
-        if self.verbose is not False:
-            print('===== Exploring the data…')
+    def shuffle(self):
+        """ Shuffle the datasets. """
 
-        return dict(stats=None)
+        if self.verbose:
+            print('===== Shuffling the data…')
 
     def __call__(self):
         """
@@ -90,17 +96,37 @@ class Wrangler:
         (and often only) layer of feature engineering.
         """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Wrangling the data…')
 
-        # ... wrangling logic goes here...
+        pass  # Continue in child class.
 
         return dict(stats=None)
+
+    def explore(self):
+        """
+        Explore the data, either visually or statistically.
+
+        Returns
+        -------
+        dict
+            This is a dictionary which contains, among other things, a column-
+            multiindexed pandas.DataFrame `desc` with the basic statistical
+            descriptions of the features, their specifications (if any), and
+            their statistical metrics for hypothesis testing purposes. The 
+            column indices of `desc` are `basic`, `hypothesis tests`, and 
+            `feature specs`.
+        """
+
+        if self.verbose:
+            print('===== Exploring the data…')
+
+        return dict(desc=None)
 
     def view(self):
         """ View one or several batches of data. """
 
-        pass
+        pass  # Continue in child class.
 
     def split(self, split_sizes=None):
         """
@@ -117,28 +143,50 @@ class Wrangler:
             (The exact choice is implementation-dependent.)
         """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Splitting the data…')
 
-    def shuffle(self):
-        """ Shuffle the datasets. """
-
-        if self.verbose is not False:
-            print('===== Shuffling the data…')
+        pass  # Continue in child class.
 
     def normalize(self):
         """ Normalize the datasets. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Normalizing the data…')
+
+        pass  # Continue in child class.
 
     def consolidate(self):
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Consolidating the data…')
 
-    def save(self):
+        pass  # Continue in child class.
+
+    def save(self, wrangler_dir='./lessons/', timestamp=True):
         """ Save the data object. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Saving the wrangler object…')
+
+        if isinstance(timestamp, bool) and timestamp is True:
+            timestamp = round(time.time())
+        elif timestamp is None:
+            timestamp = ''
+
+        try:
+            util.rw_data(
+                os.path.join(
+                    wrangler_dir, f'wrangler{timestamp}.pkl'), self)
+            if self.verbose:
+                print('✓ Saved the wrangler.')
+
+        # If saving the whole object fails, then try to save the report and
+        # the model separately.
+        except BaseException:
+            util.rw_data(
+                os.path.join(
+                    wrangler_dir, f'datasets{timestamp}.pkl'),
+                self.datasets)
+            if self.verbose:
+                print('✓ Saved the datasets.')

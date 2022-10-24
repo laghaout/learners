@@ -70,7 +70,7 @@ class Learner:
     def wrangle(self):
         """ Prepare the data. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== WRANGLE:')
 
         delta_tau = time.time()
@@ -81,8 +81,10 @@ class Learner:
         # Wrangle (i.e., engineer features), split, and normalize.
         self.report['wrangle'] = self.data()
 
+        # Split into train and test sets (and possibly serve).
         self.data.split()
 
+        # Normalize the data based on the training set.
         self.data.normalize()
 
         self.report['wrangle']['delta_tau'] = time.time() - delta_tau
@@ -90,7 +92,7 @@ class Learner:
     def design(self):
         """ Design the model. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== DESIGN:')
 
         self.model = None
@@ -98,7 +100,7 @@ class Learner:
     def explore(self):
         """ Explore the data. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== EXPLORE:')
 
         delta_tau = time.time()
@@ -110,98 +112,117 @@ class Learner:
     def select(self):
         """ Select the model. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== SELECT:')
 
         if self.hyperparams_space is None:
             print('WARNING: The hyperparameter space is not specified.',
                   'Skipping the model selection.')
             self.report['select'] = None
-        else:
 
-            self.report['select']['delta_tau'] = time.time()
+        pass  # Continue in child class.
 
     def select_report(self):
         """ Report on the model selection. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Selection report:')
+
+        pass  # Continue in child class.
 
     def train(self):
         """ Train the model. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== TRAIN:')
 
-        self.report['train']['delta_tau'] = time.time()
+        pass  # Continue in child class.
 
     def train_report(self):
         """ Report on the training. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Train report:')
+
+        pass  # Continue in child class.
 
     def test(self):
         """ Test the model. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== TEST:')
 
         self.report['test']['metrics'] = None
 
-        self.report['test']['delta_tau'] = time.time()
+        pass  # Continue in child class.
 
     def test_report(self):
         """ Report on the testing. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Test report:')
+
+        pass  # Continue in child class.
 
     def serve(self):
         """ Serve the model. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('\n========== SERVE:')
 
-        self.report['serve']['delta_tau'] = time.time()
+        pass  # Continue in child class.
 
     def serve_report(self):
         """ Report on the serving. """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('===== Serve report:')
 
-    def save(self, timestamp=True):
+        pass  # Continue in child class.
 
-        if self.verbose is not False:
+    def save(self, timestamp=True, include_data=True):
+
+        if self.verbose:
             print('\n========== SAVE:')
 
-        if timestamp is True:
+        if isinstance(timestamp, bool) and timestamp is True:
             timestamp = round(time.time())
+        elif timestamp is None:
+            timestamp = ''
 
-        # TODO: This causes the error "Can't pickle local object". Find a way
-        #       to save the learner object and not just the report.
-        # try:
-        #     util.rw_data(
-        #         os.path.join(self.lesson_dir, f'learner{timestamp}.pkl'),
-        #         self)
-        #     if self.verbose is not False:
-        #         print('✓ Saved the learner.')
-        # except BaseException:
-        #     util.rw_data(
-        #         os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
-        #         self.report)
-        #     try:  # Keras model
-        #         self.model.save(
-        #             os.path.join(
-        #                 self.lesson_dir,
-        #                 f'model{timestamp}'))
-        #     except BaseException:
-        #         util.rw_data(
-        #             os.path.join(self.lesson_dir, f'model{timestamp}.pkl'),
-        #             self)
-        #     if self.verbose is not False:
-        #         print('✓ Saved the report and the model.')
+        # Try to save the whole learner object. This typically causes the
+        # error "Can't pickle local object". TODO: Find a way to resolve this.
+        try:
+            if include_data:
+                util.rw_data(
+                    os.path.join(
+                        self.lesson_dir, f'learner{timestamp}.pkl'), self)
+            else:
+                pass  # TODO: Find a way to save self without self.data.
+
+            if self.verbose:
+                print('✓ Saved the learner.')
+
+        # If saving the whole object fails, then try to save the report and
+        # the model separately.
+        except BaseException:
+
+            # Save the report.
+            util.rw_data(
+                os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
+                self.report)
+            print('✓ Saved the report.')
+
+            # Save the model.
+            try:  # Keras model
+                self.model.save(
+                    os.path.join(self.lesson_dir, f'model{timestamp}'))
+            except BaseException:
+                util.rw_data(
+                    os.path.join(self.lesson_dir, f'model{timestamp}.pkl'),
+                    self.model)
+            if self.verbose:
+                print('✓ Saved the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
@@ -225,7 +246,7 @@ class Learner:
             Pause in between runs?
         """
 
-        if self.verbose is not False:
+        if self.verbose:
             print('======================================== [start]',
                   f'{self.lesson_dir}')
 
@@ -260,13 +281,14 @@ class Learner:
             self.serve_report()
         self.save()
 
-        if self.verbose is not False:
+        if self.verbose:
             print('======================================== [end]',
                   f' {self.lesson_dir}')
 
 # %% Run locally.
 
-# if len(USER) > 0:
-#     learner = Learner()
-#     learner()
-#     report = learner.report
+
+if len(USER) > 0:
+    learner = Learner()
+    learner()
+    report = learner.report
