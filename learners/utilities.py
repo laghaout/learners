@@ -177,7 +177,7 @@ def rw_data(path, data=None, params=None):
     # Read
     if data is None:
 
-        print(f'Reading `{path}`.')
+        print(f'Reading from `{path}`…')
 
         path = open(path, 'rb')
 
@@ -201,12 +201,14 @@ def rw_data(path, data=None, params=None):
 
         path.close()
 
+        print('done.')
+
         return data
 
     # Write
     else:
 
-        print(f'Writing to `{path}`.')
+        print(f'Writing to `{path}`…')
 
         path = open(path, 'wb')
 
@@ -228,6 +230,8 @@ def rw_data(path, data=None, params=None):
             return False
 
         path.close()
+
+        print('done.')
 
         return True
 

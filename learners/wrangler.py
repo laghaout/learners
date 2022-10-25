@@ -69,7 +69,8 @@ class Wrangler:
         if self.verbose:
             print('===== Acquiring the data…')
 
-        pass  # Continue in child class.
+        # Continue in child class. This is where `self.dataset` is defined.
+        pass
 
     def validate(self):
         """ Validate the data. """
@@ -113,15 +114,15 @@ class Wrangler:
             This is a dictionary which contains, among other things, a column-
             multiindexed pandas.DataFrame `desc` with the basic statistical
             descriptions of the features, their specifications (if any), and
-            their statistical metrics for hypothesis testing purposes. The 
-            column indices of `desc` are `basic`, `hypothesis tests`, and 
-            `feature specs`.
+            their statistical metrics for hypothesis testing purposes. The
+            column indices of `data_specs` are `basic`, `hypothesis tests`, and
+            `manual specs`.
         """
 
         if self.verbose:
             print('===== Exploring the data…')
 
-        return dict(desc=None)
+        return dict(data_specs=None)
 
     def view(self):
         """ View one or several batches of data. """
@@ -181,8 +182,7 @@ class Wrangler:
             if self.verbose:
                 print('✓ Saved the wrangler.')
 
-        # If saving the whole object fails, then try to save the report and
-        # the model separately.
+        # If saving the whole object fails, save the datasets only.
         except BaseException:
             util.rw_data(
                 os.path.join(

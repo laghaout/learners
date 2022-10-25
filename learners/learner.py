@@ -38,6 +38,8 @@ class Learner:
         """
         Generic learner class.
 
+        In the child class, this can also be used for parameter validation.
+
         Parameters
         ----------
         lesson_dir: list, tuple
@@ -67,7 +69,9 @@ class Learner:
             hyperparams=hyperparams, data_params=data_params,
             hyperparams_space=hyperparams_space, verbose=verbose, **kwargs)
 
-    def wrangle(self):
+        pass  # Validate the parameters in the child class if necessary.
+
+    def wrangle(self, wrangler_class=wra.Wrangler):
         """ Prepare the data. """
 
         if self.verbose:
@@ -76,7 +80,7 @@ class Learner:
         delta_tau = time.time()
 
         # Acquire, validate, and shuffle the raw data.
-        self.data = wra.Wrangler(**self.data_params)
+        self.data = wrangler_class(**self.data_params)
 
         # Wrangle (i.e., engineer features), split, and normalize.
         self.report['wrangle'] = self.data()
@@ -180,7 +184,7 @@ class Learner:
 
         pass  # Continue in child class.
 
-    def save(self, timestamp=True, include_data=True):
+    def save(self, lesson_dir='./lessons/', timestamp=True, include_data=True):
 
         if self.verbose:
             print('\n========== SAVE:')
@@ -196,7 +200,7 @@ class Learner:
             if include_data:
                 util.rw_data(
                     os.path.join(
-                        self.lesson_dir, f'learner{timestamp}.pkl'), self)
+                        lesson_dir, f'learner{timestamp}.pkl'), self)
             else:
                 pass  # TODO: Find a way to save self without self.data.
 
@@ -209,20 +213,22 @@ class Learner:
 
             # Save the report.
             util.rw_data(
-                os.path.join(self.lesson_dir, f'report{timestamp}.pkl'),
+                os.path.join(lesson_dir, f'report{timestamp}.pkl'),
                 self.report)
             print('✓ Saved the report.')
 
-            # Save the model.
-            try:  # Keras model
-                self.model.save(
-                    os.path.join(self.lesson_dir, f'model{timestamp}'))
-            except BaseException:
-                util.rw_data(
-                    os.path.join(self.lesson_dir, f'model{timestamp}.pkl'),
-                    self.model)
-            if self.verbose:
-                print('✓ Saved the model.')
+            if self.model is not None:
+
+                # Save the model.
+                try:  # Keras model
+                    self.model.save(
+                        os.path.join(lesson_dir, f'model{timestamp}'))
+                except BaseException:
+                    util.rw_data(
+                        os.path.join(lesson_dir, f'model{timestamp}.pkl'),
+                        self.model)
+                if self.verbose:
+                    print('✓ Saved the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
@@ -247,15 +253,15 @@ class Learner:
         """
 
         if self.verbose:
-            print('======================================== [start]',
-                  f'{self.lesson_dir}')
+            print(
+                f'======================================== start [{self.__class__.__name__}]')
 
         self.wrangle()
 
         if explore:
             self.explore()
             self.data.consolidate()
-            self.data.save()
+            self.data.save(self.lesson_dir)
             if pause:
                 input('Press Enter to continue.')
 
@@ -279,11 +285,11 @@ class Learner:
         if serve:
             self.serve()
             self.serve_report()
-        self.save()
+        self.save(self.lesson_dir)
 
         if self.verbose:
-            print('======================================== [end]',
-                  f' {self.lesson_dir}')
+            print(
+                f'======================================== end [{self.__class__.__name__}]')
 
 # %% Run locally.
 
