@@ -35,7 +35,8 @@ class Wrangler:
         # from the source, whereas the very last is the machine-readable
         # dataset, i.e., after operations such as one-hot encoding,
         # normalization, etc.
-        self.datasets = dict()
+        self.dataset = None
+        self.datasets = dict(raw=self.dataset)
 
         # Convert all the arguments to attributes.
         util.args_to_attributes(
@@ -134,7 +135,6 @@ class Wrangler:
         Split the data sets into the sections specified by ``split_sizes``. As
         a result ``self.dataset`` as well as each element in ``self.datasets``
         is split accordingly.
-
         Parameter
         ---------
         split_sizes: dict, None

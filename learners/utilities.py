@@ -7,6 +7,7 @@ Created on Thu Aug 24 11:48:58 2017
 """
 
 import os
+import getpass
 import json
 import pandas as pd
 import tensorflow as tf
@@ -374,6 +375,41 @@ def load_learner(
     return report, learner, model
 
 
+def split(data, parts: dict) -> dict:
+    """
+    TODO: Adapt this so that it works with pd.DataFrame, NumPy, TensorFlow data
+    sets, etc. If using pd.DataFrame, use the split function from sklearn.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Dataset
+    parts : dict
+        Dictionary of the proportions for the different parts to be split
+        into.
+
+    Returns
+    -------
+    dict
+        Dictionary containing all the different parts of the dataset.
+    """
+
+    # Make sure the proportions of the different parts add up to unity.
+    assert sum(parts.values()) == 1
+
+    # For each part…
+    prev = 0
+    splitdata = parts.copy()
+    lendata = len(data)
+    for k, v in parts.items():
+        # … take a slice proportional to the part.
+        curr = prev + round(v * lendata)
+        splitdata[k] = data[prev:curr]
+        prev = curr
+
+    return splitdata
+
+
 def assemble_dataframe(batch, label, label_name='label'):
     """
     Parameters
@@ -415,6 +451,23 @@ def assemble_dataframe(batch, label, label_name='label'):
     batch = pd.DataFrame(batch)
 
     return batch
+
+
+def check_docker(verbose=True, BASE_DIR=['/', 'home']):
+
+    INSIDE_DOCKER_CONTAINER = os.environ.get('INSIDE_DOCKER_CONTAINER', False)
+    USER = getpass.getuser()
+
+    if INSIDE_DOCKER_CONTAINER:
+        if verbose:
+            print(f'We are inside Docker as USER = {USER}.')
+        # matplotlib.use('TkAgg')
+    else:
+        if verbose:
+            print(f'We are outside Docker as USER = {USER}.')
+        BASE_DIR += [USER]
+
+    return INSIDE_DOCKER_CONTAINER, USER, BASE_DIR
 
 
 class PackNumericFeatures(object):
