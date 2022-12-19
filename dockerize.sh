@@ -1,7 +1,5 @@
 #!/bin/sh
 
-IMAGE_NAME=learners
-
 # Clean up artifacts.
 ./clean.sh
 
@@ -21,4 +19,4 @@ pip3 uninstall -y learners
 python3 setup.py install --user
 
 # Create a Docker image.
-docker build --tag=$IMAGE_NAME .
+docker build -t $(basename $PWD) .
