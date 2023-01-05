@@ -196,7 +196,7 @@ def rw_data(path, data=None, params=None):
         elif extension in ('hdf5', 'h5', 'hdf'):
             pass
         elif extension in ('csv'):
-            pass
+            data = pd.read_csv(path, **params)
         else:
             print('WARNING: No file format specified.')
 
@@ -225,7 +225,7 @@ def rw_data(path, data=None, params=None):
         elif extension in ('hdf5', 'h5', 'hdf'):
             pass
         elif extension in ('csv'):
-            pass
+            data = data.to_csv(path, **params)
         else:
             print('WARNING: No file format specified.')
             return False
@@ -453,7 +453,10 @@ def assemble_dataframe(batch, label, label_name='label'):
     return batch
 
 
-def check_docker(verbose=True, BASE_DIR=['/', 'home']):
+def check_docker(verbose=True, BASE_DIR=None):
+
+    if BASE_DIR is None:
+        BASE_DIR = ['/', 'home']
 
     INSIDE_DOCKER_CONTAINER = os.environ.get('INSIDE_DOCKER_CONTAINER', False)
     USER = getpass.getuser()
