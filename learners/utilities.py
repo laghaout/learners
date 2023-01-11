@@ -7,7 +7,6 @@ Created on Thu Aug 24 11:48:58 2017
 """
 
 import os
-import getpass
 import json
 import pandas as pd
 import tensorflow as tf
@@ -48,14 +47,14 @@ def version_table(print2screen=True):
     from tensorflow import __version__ as tf_version
 
     version_table = {
-        'Python': ('3.9.10', '.'.join(str(v) for v in version_info[0:3])),
-        'TensorFlow.': ('2.10.0', tf_version),
-        'NumPy': ('1.23.4', np_version),
-        'matplotlib': ('3.5.3', plt_version),
-        'sklearn': ('1.1.2', sk_version),
+        'Python': ('3.9.16', '.'.join(str(v) for v in version_info[0:3])),
+        'TensorFlow.': ('2.11.0', tf_version),
+        'NumPy': ('1.23.5', np_version),
+        'matplotlib': ('3.6.2', plt_version),
+        'sklearn': ('1.2.0', sk_version),
         'PyQt5': ('5.6.2', None),
-        'pandas': ('1.5.1', pd_version),
-        'dcor': ('0.5.7', dco_version),
+        'pandas': ('1.5.2', pd_version),
+        'dcor': ('0.6', dco_version),
         'OS': ('Linux-5.10.0-14-amd64-x86_64-with-glibc2.31',
                platform.platform()),
         'CPU': ('Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz',
@@ -454,6 +453,10 @@ def assemble_dataframe(batch, label, label_name='label'):
 
 
 def check_docker(verbose=True, BASE_DIR=None):
+
+    import getpass
+
+    # TODO: Replace this function by `get_env_vars()`
 
     if BASE_DIR is None:
         BASE_DIR = ['/', 'home']
