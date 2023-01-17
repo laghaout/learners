@@ -184,7 +184,10 @@ class Learner:
 
         pass  # Continue in child class.
 
-    def save(self, lesson_dir='./lessons/', timestamp=True, include_data=True):
+    def save(self, lesson_dir: str = 'lessons', timestamp: bool = True,
+             include_data: bool = True):
+
+        import pickle
 
         if self.verbose:
             print('\n========== SAVE:')
@@ -194,41 +197,36 @@ class Learner:
         elif timestamp is None:
             timestamp = ''
 
-        # Try to save the whole learner object. This typically causes the
-        # error "Can't pickle local object". TODO: Find a way to resolve this.
-        try:
-            if include_data:
-                util.rw_data(
-                    os.path.join(
-                        lesson_dir, f'learner{timestamp}.pkl'), self)
-            else:
-                pass  # TODO: Find a way to save self without self.data.
-
-            if self.verbose:
-                print('✓ Saved the learner.')
-
-        # If saving the whole object fails, then try to save the report and
-        # the model separately.
-        except BaseException:
-
-            # Save the report.
-            util.rw_data(
-                os.path.join(lesson_dir, f'report{timestamp}.pkl'),
-                self.report)
-            print('✓ Saved the report.')
-
-            if self.model is not None:
-
-                # Save the model.
-                try:  # Keras model
-                    self.model.save(
-                        os.path.join(lesson_dir, f'model{timestamp}'))
+        # Save, then delete the model.
+        if hasattr(self, 'model'):
+            try:  # Keras model?
+                self.model.save(os.path.join(lesson_dir, f'model{timestamp}'))
+            except BaseException:
+                # If the model is not in Keras, attempt to just pickle it.
+                try:
+                    pickle.dump(
+                        self.model,
+                        open(os.path.join(lesson_dir, f'model{timestamp}.pkl'),
+                             'wb'))
                 except BaseException:
-                    util.rw_data(
-                        os.path.join(lesson_dir, f'model{timestamp}.pkl'),
-                        self.model)
-                if self.verbose:
-                    print('✓ Saved the model.')
+                    print('WARNING: Failed to save the model.')
+            delattr(self, 'model')
+
+        # Save, then delete the callbacks, if any.
+        # TODO: Find a way to save the callbacks.
+        if hasattr(self, 'callbacks'):
+            delattr(self, 'callbacks')
+
+        # Delete the data unless it is requested to be included.
+        if hasattr(self, 'data') and include_data is False:
+            delattr(self, 'data')
+
+        # Save whatever remains of the model.
+        pickle.dump(
+            self,
+            open(os.path.join(lesson_dir, f'learner{timestamp}.pkl'), 'wb'))
+        if self.verbose:
+            print('✓ Saved the learner.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,

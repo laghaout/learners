@@ -11,6 +11,7 @@ import json
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import layers
+from types import SimpleNamespace
 
 
 def version_table(print2screen=True):
@@ -75,6 +76,72 @@ def version_table(print2screen=True):
             print(''.rjust(pad), '  ', version_table[k][1], sep='')
 
     return version_table
+
+
+class EnvManager:
+
+    def __init__(
+            self,
+            cloud_params: dict = dict(),
+            container_params: tuple = tuple()):
+
+        import getpass
+        self.cloud_params(**cloud_params)
+        self.container_params(container_params)
+        self.USER = getpass.getuser()
+
+    def __call__(self, **kwargs):
+
+        self.paths = dict(CWD=os.getcwd())
+        for k, v in kwargs.items():
+            if isinstance(v, list):
+                v = os.path.join(*v)
+            self.paths[k] = v
+        self.paths = SimpleNamespace(**self.paths)
+
+        self.manage_paths()
+
+    def manage_paths(self):
+
+        if self.containers.INSIDE_GCP in (True, 'Yes'):
+            self.paths.data_dir = os.path.join(
+                *['/', 'gcs', self.cloud.BUCKET, 'entity', self.paths.dir_name])
+            self.paths.lesson_dir = os.path.join(
+                *['/', 'gcs', self.cloud.BUCKET, 'entity', self.paths.dir_name, self.paths.lesson_dir])
+        elif self.containers.INSIDE_DOCKER_CONTAINER in (True, 'Yes'):
+            self.paths.data_dir = os.path.join(
+                *['/', 'home', 'Data', self.paths.dir_name])
+        else:
+            self.paths.data_dir = os.path.join(
+                *['/', 'home', self.USER, 'Data', self.paths.dir_name])
+
+    def container_params(self, args: tuple):
+
+        assert isinstance(args, tuple)
+
+        self.containers = SimpleNamespace(
+            **{v: os.environ.get(v, False) for v in args})
+
+    def cloud_params(self, cloud_params: str = 'cloud_params.json', **kwargs):
+
+        from json import load
+        if isinstance(cloud_params, list):
+            cloud_params = os.path.join(*cloud_params)
+        self.cloud = load(open(cloud_params, 'r'))
+        self.cloud.update(**kwargs)
+        self.cloud = SimpleNamespace(**self.cloud)
+
+    def summary(self):
+
+        for k, v in sorted(self.__dict__.items()):
+
+            if isinstance(v, SimpleNamespace):
+                print(f"# {k}")
+                for ka, va in v.__dict__.items():
+                    print(f"- {ka}: {va}")
+            else:
+                print(f"- {k}: {v}")
+            print()
 
 
 def set_argv(defaults, argv):
