@@ -26,7 +26,7 @@ class Learner:
 
     def __init__(
             self,
-            lesson_dir=['lessons'],
+            lesson_dir=['lesson'],
             data_params=dict(),
             hyperparams=dict(),
             hyperparams_space=None,
@@ -184,7 +184,7 @@ class Learner:
 
         pass  # Continue in child class.
 
-    def save(self, lesson_dir: str = 'lessons', timestamp: bool = True,
+    def save(self, lesson_dir: str = 'lesson', timestamp: bool = True,
              include_data: bool = True):
 
         import pickle
@@ -259,7 +259,7 @@ class Learner:
         if explore:
             self.explore()
             self.data.consolidate()
-            self.data.save(self.lesson_dir)
+            # self.data.save(self.lesson_dir)  # Save the wrangler separately.
             if pause:
                 input('Press Enter to continue.')
 
@@ -283,7 +283,7 @@ class Learner:
         if serve:
             self.serve()
             self.serve_report()
-        self.save(self.lesson_dir)
+        self.save(self.lesson_dir, timestamp=None)
 
         if self.verbose:
             print(

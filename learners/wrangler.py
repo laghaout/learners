@@ -164,7 +164,7 @@ class Wrangler:
 
         pass  # Continue in child class.
 
-    def save(self, wrangler_dir='./lessons/', timestamp=True):
+    def save(self, wrangler_dir='./lesson/', timestamp=True):
         """ Save the data object. """
 
         if self.verbose:

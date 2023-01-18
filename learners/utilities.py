@@ -18,6 +18,10 @@ def version_table(print2screen=True):
     """
     This function returns the version numbers of the various pieces of software
     with which this module was tested.
+
+    TODO: Delocalize this hard-coding into a JSON that can be updated with new
+          values.
+
     Notes
     -----
     In order for Hyperopt 0.1 to work, ``networkx`` had to be downgraded by
@@ -79,18 +83,76 @@ def version_table(print2screen=True):
 
 
 class EnvManager:
+    """
+    Environment manager. This is used to encapsulate into a single object all
+    the parameters that may vary from one environment to another, namely
+
+    - all the paths (both relative and absolute) to the various locations that
+      could be relevant (e.g., datasets, models, etc.). Cf. ``self.paths``.
+    - All the environment variables that are specific to the particular
+      container in which the code is run. Cf. ``self.container``.
+    - All the cloud parameters (region, buckets, etc.). Cf. ``self.cloud``.
+    - Any other relevant parameter specific to the environment (e.g., the
+      username ``self.USER``, etc.)
+    """
 
     def __init__(
             self,
             cloud_params: dict = dict(),
-            container_params: tuple = tuple()):
+            container_params: tuple = tuple(),
+            cloud_params_default: str = 'cloud_params.json'):
+        """
+        Parameters
+        ----------
+        cloud_params : dict, optional
+            Any cloud parameters that need to overwrite the default cloud
+            parameters stored in ``cloud_params_default``. The default is
+            dict(), i.e., an empty dictionary of such new parameters.
+        container_params : tuple, optional
+            Any environment parameters that need to be retrieved from the
+            container. The default is tuple().
+        cloud_params_default : str or list, optional
+            Path to the JSON that contains all the cloud parameters. The
+            default is 'cloud_params.json'.
+
+        Returns
+        -------
+        None.
+        """
 
         import getpass
-        self.cloud_params(**cloud_params)
+
+        # Determine the cloud parameters.
+        self.cloud_params(cloud_params_default, **cloud_params)
+
+        # Determine the environment parameters in the container.
         self.container_params(container_params)
+
+        # Retrieve the username.
         self.USER = getpass.getuser()
 
     def __call__(self, **kwargs):
+        """
+        Once the object has already been populated with its cloud and container
+        parameters, one can then create the logic that constructs the
+        appropriate paths based on the cloud and container locations.
+
+        The logic is encapsulated in ``self.manage_paths()`` for easier object-
+        oriented definition in child classes.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Dictionary of paths to be constructed where the key is the name of
+            the path and the value is its default in a non-containerized, local
+            environment.
+
+        Returns
+        -------
+        None. The result is a SimpleNamespace of the paths stored in
+        ``self.paths``.
+
+        """
 
         self.paths = dict(CWD=os.getcwd())
         for k, v in kwargs.items():
@@ -102,37 +164,84 @@ class EnvManager:
         self.manage_paths()
 
     def manage_paths(self):
+        """
+        Logic which updates the paths based on the container and cloud
+        parameters.
 
+        Returns
+        -------
+        None. This updates ``self.paths``.
+
+        """
+
+        # We are inside the GCP.
         if self.containers.INSIDE_GCP in (True, 'Yes'):
             self.paths.data_dir = os.path.join(
                 *['/', 'gcs', self.cloud.BUCKET, 'entity', self.paths.dir_name])
             self.paths.lesson_dir = os.path.join(
-                *['/', 'gcs', self.cloud.BUCKET, 'entity', self.paths.dir_name, self.paths.lesson_dir])
+                *['/', 'gcs', self.cloud.BUCKET, 'map', self.paths.dir_name,
+                  self.paths.lesson_dir])
+
+        # We are outside the GCP, but inside the Docker container.
         elif self.containers.INSIDE_DOCKER_CONTAINER in (True, 'Yes'):
             self.paths.data_dir = os.path.join(
                 *['/', 'home', 'Data', self.paths.dir_name])
+
+        # We are neither in the GCP nor in a Docker container.
         else:
             self.paths.data_dir = os.path.join(
                 *['/', 'home', self.USER, 'Data', self.paths.dir_name])
 
     def container_params(self, args: tuple):
+        """
+        Determine the tuple of relevant environment variables in the container.
+
+        Parameters
+        ----------
+        args : tuple
+            Tuple of environment variables to be retrieved.
+
+        Returns
+        -------
+        None. This updates the SimpleNamespace ``self.containers`` of container
+        environment variables.
+
+        """
 
         assert isinstance(args, tuple)
 
         self.containers = SimpleNamespace(
             **{v: os.environ.get(v, False) for v in args})
 
-    def cloud_params(self, cloud_params: str = 'cloud_params.json', **kwargs):
+    def cloud_params(self, cloud_params_default, **kwargs):
+        """
+        Parameters
+        ----------
+        cloud_params : str or list
+            Pathname to the JSON that stores the default cloud parameters.
+        **kwargs : dict
+            Dictionary of cloud parameters that could overwrite the defaults.
+
+        Returns
+        -------
+        None. This creates a SimpleNamespace ``self.cloud`` with all the
+        relevant parameters of the cloud.
+        """
 
         from json import load
-        if isinstance(cloud_params, list):
-            cloud_params = os.path.join(*cloud_params)
-        self.cloud = load(open(cloud_params, 'r'))
+        if isinstance(cloud_params_default, list):
+            cloud_params_default = os.path.join(*cloud_params_default)
+        self.cloud = load(open(cloud_params_default, 'r'))
         self.cloud.update(**kwargs)
         self.cloud = SimpleNamespace(**self.cloud)
 
     def summary(self):
+        """
+        Summary of all the environment parameters, including the adaptive
+        pathnames, from the containers and from the cloud.
+        """
 
+        print('\n=== Environment manager summary ========\n')
         for k, v in sorted(self.__dict__.items()):
 
             if isinstance(v, SimpleNamespace):
@@ -142,6 +251,7 @@ class EnvManager:
             else:
                 print(f"- {k}: {v}")
             print()
+        print('========================================\n')
 
 
 def set_argv(defaults, argv):
@@ -384,11 +494,13 @@ def fetch_object(path_from_ref_dir, attributes=None, ref_dir=['/', 'home']):
                 for attribute in attributes}
 
 
-def load_learner(
+def load_learner_OLD(
         directory: list = [],
         timestamp: int = None,
         verbose: bool = True):
     """
+    TODO: Delete this function.
+
     Loads and returns the saved report, learner, and model.
 
     Parameters
