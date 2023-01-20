@@ -289,10 +289,9 @@ class Learner:
             print(
                 f'======================================== end [{self.__class__.__name__}]')
 
-# %% Run locally.
 
-
-if len(USER) > 0:
+# %% Run as script, not as a module.
+if __name__ == '__main__':
     learner = Learner()
     learner()
     report = learner.report
