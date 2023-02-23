@@ -1,5 +1,5 @@
-# Inherit from the Python 3.9 image.
-FROM python:3.9-slim
+# Inherit from the Python image.
+FROM python:3.10-slim
 
 # Declare the working directory.
 WORKDIR /learners

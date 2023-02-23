@@ -494,65 +494,6 @@ def fetch_object(path_from_ref_dir, attributes=None, ref_dir=['/', 'home']):
                 for attribute in attributes}
 
 
-def load_learner_OLD(
-        directory: list = [],
-        timestamp: int = None,
-        verbose: bool = True):
-    """
-    TODO: Delete this function.
-
-    Loads and returns the saved report, learner, and model.
-
-    Parameters
-    ----------
-    directory : list, optional
-        Path to the directory containing the saved learner.
-    timestamp : int, optional
-        Timestamp of the learner directory The default is None.
-    verbose : bool, optional
-        Print messages to the screen.
-
-    Returns
-    -------
-    report : pickle file
-        Report of the learner.
-    learner : pickle file
-        Learner object.
-    model : pickle file
-        Model of the learner object.
-
-    """
-
-    if verbose:
-        print('========== LOAD:')
-
-    import os
-    import tensorflow as tf
-    from learners.utilities import rw_data
-
-    if timestamp is None:
-        timestamp = ''
-
-    directory = os.path.join(
-        *directory + [f'{timestamp}', 'lessons', ''])
-
-    # Load the report.
-    report = rw_data(directory + f'report{timestamp}.pkl')
-
-    # Load the model.
-    model = tf.keras.models.load_model(directory + f'model{timestamp}')
-
-    # Load the learner.
-    try:
-        learner = rw_data(directory + f'learner{timestamp}.pkl')
-    except BaseException:
-        learner = None
-        if verbose:
-            print("WARNING: Could not load the learner.")
-
-    return report, learner, model
-
-
 def split(data, parts: dict) -> dict:
     """
     TODO: Adapt this so that it works with pd.DataFrame, NumPy, TensorFlow data
