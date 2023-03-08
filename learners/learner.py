@@ -185,7 +185,7 @@ class Learner:
         pass  # Continue in child class.
 
     def save(self, lesson_dir: str = 'lesson', timestamp: bool = True,
-             include_data: bool = True):
+             include_data: bool = True) -> None:
 
         import pickle
 
@@ -213,8 +213,8 @@ class Learner:
             delattr(self, 'model')
 
         # Save, then delete the callbacks, if any.
-        # TODO: Find a way to save the callbacks.
         if hasattr(self, 'callbacks'):
+            # TODO: Find a way to save the callbacks.
             delattr(self, 'callbacks')
 
         # Delete the data unless it is requested to be included.
@@ -222,11 +222,20 @@ class Learner:
             delattr(self, 'data')
 
         # Save whatever remains of the model.
-        pickle.dump(
-            self,
-            open(os.path.join(lesson_dir, f'learner{timestamp}.pkl'), 'wb'))
-        if self.verbose:
-            print('✓ Saved the learner.')
+        try:
+            pickle.dump(
+                self,
+                open(
+                    os.path.join(
+                        lesson_dir,
+                        f'learner{timestamp}.pkl'),
+                    'wb'))
+            if self.verbose:
+                print('✓ Saved the learner.')
+        except BaseException:
+            print('WARNING: Failed to save the model.')
+            if self.verbose:
+                print('WARNING: Failed to save the model.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
