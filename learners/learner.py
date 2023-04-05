@@ -221,7 +221,7 @@ class Learner:
         if hasattr(self, 'data') and include_data is False:
             delattr(self, 'data')
 
-        # Save whatever remains of the model.
+        # Save whatever remains of the learner.
         try:
             pickle.dump(
                 self,
@@ -233,9 +233,7 @@ class Learner:
             if self.verbose:
                 print('✓ Saved the learner.')
         except BaseException:
-            print('WARNING: Failed to save the model.')
-            if self.verbose:
-                print('WARNING: Failed to save the model.')
+            print('WARNING: Failed to save the learner.')
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,

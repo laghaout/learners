@@ -231,9 +231,11 @@ class EnvManager:
         from json import load
         if isinstance(cloud_params_default, list):
             cloud_params_default = os.path.join(*cloud_params_default)
-        self.cloud = load(open(cloud_params_default, 'r'))
-        self.cloud.update(**kwargs)
-        self.cloud = SimpleNamespace(**self.cloud)
+        # TODO: Check that the JSON exists.
+        if os.path.isfile(cloud_params_default):
+            self.cloud = load(open(cloud_params_default, 'r'))
+            self.cloud.update(**kwargs)
+            self.cloud = SimpleNamespace(**self.cloud)
 
     def summary(self):
         """
@@ -296,24 +298,65 @@ def args_to_attributes(obj, **kwargs):
     return obj
 
 
-def view_with_pandas(df, index=None, encoding='utf-8'):
+def ds2df(
+        dataset, label_name=None, take=5, join=False, codec='utf-8',
+        index_col=None):
     """
-    View a ``tf.data.Dataset`` batch as a ``pandas.DataFrame`` by converting
-    all the byte strings into regular Python strings
+    Convert a ``tf.data.Dataset`` to a ``pandas.DataFrame``.
+
+    Parameters
+    ----------
+    dataset : tf.data.Dataset
+        TensorFlow dataset
+    label_name : str, optional
+        Label name. The default is None.
+    take : int, optional
+        Number of batches to take. The default is 5.
+    join : bool, optional
+        Concatenate all the batches into a single DataFrame? The default is
+        False.
+    codec : str, optional
+        Encoding standard to convert byte strings to string. The default is
+        'utf-8'.
+    index_col : str, optional
+        Index column. The default is None.
+
+    Returns
+    -------
+    df : pandas.DataFrame, list
+        Pandas DataFrame (if ``join=True``) or list (if ``join=False``)
+        corresponding to the dataset.
+
     """
 
-    def decode(x):
-        try:
-            x = x.decode(encoding)
-        except Exception:
-            pass
-        return x
+    if type(dataset.element_spec):
+        is_tuple = True
+    else:
+        is_tuple = False
 
-    df = df.applymap(decode)
+    dfs = []
 
-    df[index] = df[index].astype('str')
-    if index is not None:
-        df.set_index(index, inplace=True)
+    for i, example in enumerate(dataset.take(take)):
+
+        if is_tuple:
+            features, targets = example
+            df = pd.DataFrame(features)
+            df.insert(0, label_name, targets.numpy())
+        else:
+            df = pd.DataFrame(example)
+
+        object_cols = df.select_dtypes([object])
+        df[object_cols.columns] = object_cols.stack().str.decode(codec).unstack()
+
+        if index_col is not None:
+            df.set_index(index_col, inplace=True)
+
+        dfs += [df]
+
+    if join is not False:
+        df = pd.concat(dfs, axis=0)
+    else:
+        df = dfs
 
     return df
 

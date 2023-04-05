@@ -108,16 +108,6 @@ class Wrangler:
     def explore(self):
         """
         Explore the data, either visually or statistically.
-
-        Returns
-        -------
-        dict
-            This is a dictionary which contains, among other things, a column-
-            multiindexed pandas.DataFrame `desc` with the basic statistical
-            descriptions of the features, their specifications (if any), and
-            their statistical metrics for hypothesis testing purposes. The
-            column indices of `data_specs` are `basic`, `hypothesis tests`, and
-            `manual specs`.
         """
 
         if self.verbose:
