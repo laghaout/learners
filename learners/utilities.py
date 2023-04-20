@@ -299,7 +299,7 @@ def args_to_attributes(obj, **kwargs):
 
 
 def ds2df(
-        dataset, label_name=None, take=5, join=False, codec='utf-8',
+        dataset, label_name=None, take=5, join=True, codec='utf-8',
         index_col=None):
     """
     Convert a ``tf.data.Dataset`` to a ``pandas.DataFrame``.

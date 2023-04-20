@@ -82,7 +82,7 @@ class Learner:
         # Acquire, validate, and shuffle the raw data.
         self.data = wrangler_class(**self.data_params)
 
-        # Wrangle (i.e., engineer features), split, and normalize.
+        # Wrangle (i.e., engineer features).
         self.report['wrangle'] = self.data()
 
         # Split into train and test sets (and possibly serve).
