@@ -101,13 +101,27 @@ class Wrangler:
         if self.verbose:
             print('===== Wrangling the data…')
 
-        pass  # Continue in child class.
+        pass  # Continue in child class with the following:
+
+        # Pre-split wrangling.
+
+        # Split into train, validate, and test sets.
+        # self.data.split()
+
+        # Post-split wrangling.
+
+        # Normalize the data based on the training set.
+        # self.data.normalize()
 
         return dict(stats=None)
 
     def explore(self):
         """
         Explore the data, either visually or statistically.
+
+        Note: This is the data exploration on the final version of the data.
+        This is to avoid having to have an alternating sequence of exploration
+        and wrangling.
         """
 
         if self.verbose:

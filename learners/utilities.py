@@ -299,8 +299,8 @@ def args_to_attributes(obj, **kwargs):
 
 
 def ds2df(
-        dataset, label_name=None, take=5, join=True, codec='utf-8',
-        index_col=None):
+        dataset, target_name=None, take=5, join=True, codec='utf-8',
+        index_col=None, exclude_cols=None):
     """
     Convert a ``tf.data.Dataset`` to a ``pandas.DataFrame``.
 
@@ -308,7 +308,7 @@ def ds2df(
     ----------
     dataset : tf.data.Dataset
         TensorFlow dataset
-    label_name : str, optional
+    target_name : str, optional
         Label name. The default is None.
     take : int, optional
         Number of batches to take. The default is 5.
@@ -320,6 +320,8 @@ def ds2df(
         'utf-8'.
     index_col : str, optional
         Index column. The default is None.
+    exclude_cols = None, list
+        List of columns to exclude from the DataFrame.
 
     Returns
     -------
@@ -329,7 +331,7 @@ def ds2df(
 
     """
 
-    if type(dataset.element_spec):
+    if isinstance(dataset.element_spec, tuple):
         is_tuple = True
     else:
         is_tuple = False
@@ -340,13 +342,19 @@ def ds2df(
 
         if is_tuple:
             features, targets = example
+            if isinstance(exclude_cols, list):
+                [features.pop(k) for k in exclude_cols]
             df = pd.DataFrame(features)
-            df.insert(0, label_name, targets.numpy())
+            df.insert(0, target_name, targets.numpy())
         else:
+            if isinstance(exclude_cols, list):
+                [example.pop(k) for k in exclude_cols]
             df = pd.DataFrame(example)
 
         object_cols = df.select_dtypes([object])
-        df[object_cols.columns] = object_cols.stack().str.decode(codec).unstack()
+        if not object_cols.empty:
+            df[object_cols.columns] = object_cols.stack(
+            ).str.decode(codec).unstack()
 
         if index_col is not None:
             df.set_index(index_col, inplace=True)
@@ -572,7 +580,7 @@ def split(data, parts: dict) -> dict:
     return splitdata
 
 
-def assemble_dataframe(batch, label, label_name='label'):
+def assemble_dataframe(batch, label, target_name='label'):
     """
     Parameters
     ----------
@@ -580,7 +588,7 @@ def assemble_dataframe(batch, label, label_name='label'):
         Features tensor
     label: tf.Tensor
         Labels tensor
-    label_name: str
+    target_name: str
         Name of the label (i.e., target)
 
     Return
@@ -606,7 +614,7 @@ def assemble_dataframe(batch, label, label_name='label'):
 
         batch = pd.DataFrame(batch)
         label = pd.DataFrame(
-            {label_name: label}, index=range(len(label)))
+            {target_name: label}, index=range(len(label)))
         batch = pd.concat(
             [batch, label], axis=1, sort=False)
 

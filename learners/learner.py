@@ -72,7 +72,12 @@ class Learner:
         pass  # Validate the parameters in the child class if necessary.
 
     def wrangle(self, wrangler_class=wra.Wrangler):
-        """ Prepare the data. """
+        """
+        Prepare the data.
+
+        Note: We're passing wra.Wrangler so as to ensure we're getting the
+        child's wrangler class and not the parent class'.
+        """
 
         if self.verbose:
             print('\n========== WRANGLE:')
@@ -84,12 +89,6 @@ class Learner:
 
         # Wrangle (i.e., engineer features).
         self.report['wrangle'] = self.data()
-
-        # Split into train and test sets (and possibly serve).
-        self.data.split()
-
-        # Normalize the data based on the training set.
-        self.data.normalize()
 
         self.report['wrangle']['delta_tau'] = time.time() - delta_tau
 

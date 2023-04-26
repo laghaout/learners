@@ -15,7 +15,7 @@ RUN apt -y install tree
 # Install Python packages.
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install --user --upgrade pip
-RUN pip3 install tensorflow==2.11.0
+RUN pip3 install tensorflow==2.12.0
 RUN pip3 install autopep8
 RUN pip3 install seaborn==0.12.2
 RUN pip3 install matplotlib==3.6.2
