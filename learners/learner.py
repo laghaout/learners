@@ -183,45 +183,64 @@ class Learner:
 
         pass  # Continue in child class.
 
-    def save(self, lesson_dir: str = 'lesson', timestamp: bool = True,
-             include_data: bool = True) -> None:
+    def save(
+            self, lesson_dir: str = None, timestamp: bool = False,
+            include_data: bool = False,
+            delete_before_save: list = None) -> None:
 
         import pickle
 
         if self.verbose:
             print('\n========== SAVE:')
 
+        if lesson_dir is None and hasattr(self, 'lesson_dir'):
+            lesson_dir = self.lesson_dir
+
         if isinstance(timestamp, bool) and timestamp is True:
             timestamp = round(time.time())
-        elif timestamp is None:
+        elif timestamp is None or timestamp is False:
             timestamp = ''
 
-        # Save, then delete the model.
+        # Save the model.
         if hasattr(self, 'model'):
-            try:  # Keras model?
+            # Do we have a Keras model?
+            try:
                 self.model.save(os.path.join(lesson_dir, f'model{timestamp}'))
+                print('✓ Saved the model.')
+            # If not, just try pickling it.
             except BaseException:
-                # If the model is not in Keras, attempt to just pickle it.
                 try:
                     pickle.dump(
                         self.model,
                         open(os.path.join(lesson_dir, f'model{timestamp}.pkl'),
                              'wb'))
+                    print('✓ Saved the model.')
                 except BaseException:
                     print('WARNING: Failed to save the model.')
-            delattr(self, 'model')
 
-        # Save, then delete the callbacks, if any.
-        if hasattr(self, 'callbacks'):
-            # TODO: Find a way to save the callbacks.
-            delattr(self, 'callbacks')
-
-        # Delete the data unless it is requested to be included.
-        if hasattr(self, 'data') and include_data is False:
-            delattr(self, 'data')
-
-        # Save whatever remains of the learner.
+        # Save the learner object.
         try:
+            # Delete any attributes which we do not want to save or which cannot be
+            # saved without throwing any error.
+            if isinstance(delete_before_save, list):
+                assert len(delete_before_save) > 0
+
+                delete_before_save = sorted(delete_before_save)
+                delete_before_save.reverse()
+
+                for k in delete_before_save:
+                    attributes = k.split('.')
+                    if len(attributes) > 1 and hasattr(
+                            eval('self.' + '.'.join(attributes[:-1])), attributes[-1]):
+                        delattr(
+                            eval('self.' + '.'.join(attributes[:-1])), attributes[-1])
+                    elif len(attributes) == 1 and hasattr(self, attributes[0]):
+                        delattr(self, attributes[0])
+                    else:
+                        print(
+                            f'WARNING: There is a problem with the attribute {k}')
+
+            # Save whatever remains of the learner object.
             pickle.dump(
                 self,
                 open(
@@ -229,6 +248,7 @@ class Learner:
                         lesson_dir,
                         f'learner{timestamp}.pkl'),
                     'wb'))
+
             if self.verbose:
                 print('✓ Saved the learner.')
         except BaseException:
@@ -236,7 +256,7 @@ class Learner:
 
     def __call__(self,
                  explore=True, select=True, train=True, test=True, serve=True,
-                 pause=False):
+                 save=False, pause=False):
         """
         Run the various stages of the learning.
 
@@ -264,8 +284,6 @@ class Learner:
 
         if explore:
             self.explore()
-            self.data.consolidate()
-            # self.data.save(self.lesson_dir)  # Save the wrangler separately.
             if pause:
                 input('Press Enter to continue.')
 
@@ -289,7 +307,9 @@ class Learner:
         if serve:
             self.serve()
             self.serve_report()
-        self.save(self.lesson_dir, timestamp=None)
+
+        if save:
+            self.save(self.lesson_dir)
 
         if self.verbose:
             print(
