@@ -198,6 +198,8 @@ class Learner:
 
         if isinstance(timestamp, bool) and timestamp is True:
             timestamp = round(time.time())
+            # Note: Alternatively, we can use
+            # time.strftime("%Y-%m-%d %H:%M:%S")
         elif timestamp is None or timestamp is False:
             timestamp = ''
 

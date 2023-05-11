@@ -1,5 +1,9 @@
-# Inherit from the Python image.
-FROM python:3.10-slim
+# Comment in to use the GPU. (Remember to use the `--gpus all` flag with `docker run`.)
+#FROM tensorflow/tensorflow:2.11.1-gpu
+
+# Alternatively, use the CPU-version. Choose either one of the two lines below. If choosing the base image for TensorFlow, comment out the pip3 installation of TensorFlow further down.
+#FROM tensorflow/tensorflow:2.11.1
+FROM python:3.10-slim  
 
 # Declare the working directory.
 WORKDIR /learners
@@ -15,7 +19,7 @@ RUN apt -y install tree
 # Install Python packages.
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install --user --upgrade pip
-RUN pip3 install tensorflow==2.11.1
+RUN pip3 install tensorflow==2.11.1  # Comment out if using the TensorFlow Docker images.
 RUN pip3 install autopep8
 RUN pip3 install seaborn==0.12.2
 RUN pip3 install matplotlib==3.6.2
