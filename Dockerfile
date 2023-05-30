@@ -29,9 +29,17 @@ RUN pip3 install scikit-learn==1.2.0
 RUN pip3 install py-cpuinfo
 #RUN pip3 install sequana --upgrade
 RUN pip3 install dcor==0.6
+COPY Dockerize .
+COPY clean.sh .
+COPY README.md
 
-# Install the package.
-COPY setup.py .
-COPY learners/ learners
-RUN pip3 install .
+# Set environment variables
 ENV INSIDE_DOCKER_CONTAINER Yes
+
+# Install the local package.
+COPY pyproject.toml .
+COPY learners/ learners
+RUN apt -y install python3-venv
+RUN python3 -m pip install --upgrade build
+RUN python3 -m build
+RUN python3 -m pip install --user .
