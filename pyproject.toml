@@ -18,5 +18,23 @@ requires-python = ">=3.9"
 [tool.setuptools.packages.find]
 exclude = ["tests*"]
 
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
 [project.scripts]
 learners-mock = "learners.main:main"
+

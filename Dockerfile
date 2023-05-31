@@ -3,7 +3,7 @@
 
 # Alternatively, use the CPU-version. Choose either one of the two lines below. If choosing the base image for TensorFlow, comment out the pip3 installation of TensorFlow further down.
 #FROM tensorflow/tensorflow:2.11.1
-FROM python:3.10-slim  
+FROM python:3.10-slim
 
 # Declare the working directory.
 WORKDIR /learners

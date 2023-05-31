@@ -18,7 +18,6 @@ except BaseException:
 
 
 class Wrangler:
-
     def __init__(self, data_source=None, verbose=True, **kwargs):
         """
         Generic data/environment wrangler class.
@@ -40,7 +39,8 @@ class Wrangler:
 
         # Convert all the arguments to attributes.
         util.args_to_attributes(
-            self, data_source=data_source, verbose=verbose, **kwargs)
+            self, data_source=data_source, verbose=verbose, **kwargs
+        )
 
         # Load (or generate) the raw data. Note that the wrangling per se,
         # i.e., the conversion into the machine-readable data, is not done in
@@ -68,16 +68,16 @@ class Wrangler:
         """
 
         if self.verbose:
-            print('===== Acquiring the data…')
+            print("===== Acquiring the data…")
 
         # Continue in child class. This is where `self.dataset` is defined.
         pass
 
     def validate(self):
-        """ Validate the data. """
+        """Validate the data."""
 
         if self.verbose:
-            print('===== Validating the data…')
+            print("===== Validating the data…")
 
         # Assume the validation is passed by default.
         return True
@@ -85,10 +85,10 @@ class Wrangler:
         pass  # Continue in child class.
 
     def shuffle(self):
-        """ Shuffle the datasets. """
+        """Shuffle the datasets."""
 
         if self.verbose:
-            print('===== Shuffling the data…')
+            print("===== Shuffling the data…")
 
     def __call__(self):
         """
@@ -99,7 +99,7 @@ class Wrangler:
         """
 
         if self.verbose:
-            print('===== Wrangling the data…')
+            print("===== Wrangling the data…")
 
         pass  # Continue in child class with the following:
 
@@ -125,12 +125,12 @@ class Wrangler:
         """
 
         if self.verbose:
-            print('===== Exploring the data…')
+            print("===== Exploring the data…")
 
         return dict(data_specs=None)
 
     def view(self):
-        """ View one or several batches of data. """
+        """View one or several batches of data."""
 
         pass  # Continue in child class.
 
@@ -149,48 +149,47 @@ class Wrangler:
         """
 
         if self.verbose:
-            print('===== Splitting the data…')
+            print("===== Splitting the data…")
 
         pass  # Continue in child class.
 
     def normalize(self):
-        """ Normalize the datasets. """
+        """Normalize the datasets."""
 
         if self.verbose:
-            print('===== Normalizing the data…')
+            print("===== Normalizing the data…")
 
         pass  # Continue in child class.
 
     def consolidate(self):
-
         if self.verbose:
-            print('===== Consolidating the data…')
+            print("===== Consolidating the data…")
 
         pass  # Continue in child class.
 
-    def save(self, wrangler_dir='./lesson/', timestamp=True):
-        """ Save the data object. """
+    def save(self, wrangler_dir="./lesson/", timestamp=True):
+        """Save the data object."""
 
         if self.verbose:
-            print('===== Saving the wrangler object…')
+            print("===== Saving the wrangler object…")
 
         if isinstance(timestamp, bool) and timestamp is True:
             timestamp = round(time.time())
         elif timestamp is None:
-            timestamp = ''
+            timestamp = ""
 
         try:
             util.rw_data(
-                os.path.join(
-                    wrangler_dir, f'wrangler{timestamp}.pkl'), self)
+                os.path.join(wrangler_dir, f"wrangler{timestamp}.pkl"), self
+            )
             if self.verbose:
-                print('✓ Saved the wrangler.')
+                print("✓ Saved the wrangler.")
 
         # If saving the whole object fails, save the datasets only.
         except BaseException:
             util.rw_data(
-                os.path.join(
-                    wrangler_dir, f'datasets{timestamp}.pkl'),
-                self.datasets)
+                os.path.join(wrangler_dir, f"datasets{timestamp}.pkl"),
+                self.datasets,
+            )
             if self.verbose:
-                print('✓ Saved the datasets.')
+                print("✓ Saved the datasets.")

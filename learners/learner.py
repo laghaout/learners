@@ -10,11 +10,12 @@ import os
 import time
 
 try:
-    USER = ''
+    USER = ""
     from . import wrangler as wra
     from . import utilities as util
 except BaseException:
     import getpass
+
     USER = getpass.getuser()
     import wrangler as wra
     import utilities as util
@@ -23,18 +24,19 @@ except BaseException:
 
 
 class Learner:
-
     def __init__(
-            self,
-            lesson_dir=['lesson'],
-            data_params=dict(),
-            hyperparams=dict(),
-            hyperparams_space=None,
-            verbose=1,
-            report={
-                x: dict() for x in
-                ['wrangle', 'explore', 'select', 'train', 'test', 'serve']},
-            **kwargs):
+        self,
+        lesson_dir=["lesson"],
+        data_params=dict(),
+        hyperparams=dict(),
+        hyperparams_space=None,
+        verbose=1,
+        report={
+            x: dict()
+            for x in ["wrangle", "explore", "select", "train", "test", "serve"]
+        },
+        **kwargs,
+    ):
         """
         Generic learner class.
 
@@ -65,9 +67,15 @@ class Learner:
 
         # Convert all the arguments to attributes.
         util.args_to_attributes(
-            self, lesson_dir=lesson_dir, report=report,
-            hyperparams=hyperparams, data_params=data_params,
-            hyperparams_space=hyperparams_space, verbose=verbose, **kwargs)
+            self,
+            lesson_dir=lesson_dir,
+            report=report,
+            hyperparams=hyperparams,
+            data_params=data_params,
+            hyperparams_space=hyperparams_space,
+            verbose=verbose,
+            **kwargs,
+        )
 
         pass  # Validate the parameters in the child class if necessary.
 
@@ -80,7 +88,7 @@ class Learner:
         """
 
         if self.verbose:
-            print('\n========== WRANGLE:')
+            print("\n========== WRANGLE:")
 
         delta_tau = time.time()
 
@@ -88,112 +96,116 @@ class Learner:
         self.data = wrangler_class(**self.data_params)
 
         # Wrangle (i.e., engineer features).
-        self.report['wrangle'] = self.data()
+        self.report["wrangle"] = self.data()
 
-        self.report['wrangle']['delta_tau'] = time.time() - delta_tau
+        self.report["wrangle"]["delta_tau"] = time.time() - delta_tau
 
     def design(self):
-        """ Design the model. """
+        """Design the model."""
 
         if self.verbose:
-            print('\n========== DESIGN:')
+            print("\n========== DESIGN:")
 
         self.model = None
 
     def explore(self):
-        """ Explore the data. """
+        """Explore the data."""
 
         if self.verbose:
-            print('\n========== EXPLORE:')
+            print("\n========== EXPLORE:")
 
         delta_tau = time.time()
 
-        self.report['explore'] = self.data.explore()
+        self.report["explore"] = self.data.explore()
 
-        self.report['explore']['delta_tau'] = time.time() - delta_tau
+        self.report["explore"]["delta_tau"] = time.time() - delta_tau
 
     def select(self):
-        """ Select the model. """
+        """Select the model."""
 
         if self.verbose:
-            print('\n========== SELECT:')
+            print("\n========== SELECT:")
 
         if self.hyperparams_space is None:
-            print('WARNING: The hyperparameter space is not specified.',
-                  'Skipping the model selection.')
-            self.report['select'] = None
+            print(
+                "WARNING: The hyperparameter space is not specified.",
+                "Skipping the model selection.",
+            )
+            self.report["select"] = None
 
         pass  # Continue in child class.
 
     def select_report(self):
-        """ Report on the model selection. """
+        """Report on the model selection."""
 
         if self.verbose:
-            print('===== Selection report:')
+            print("===== Selection report:")
 
         pass  # Continue in child class.
 
     def train(self):
-        """ Train the model. """
+        """Train the model."""
 
         if self.verbose:
-            print('\n========== TRAIN:')
+            print("\n========== TRAIN:")
 
         pass  # Continue in child class.
 
     def train_report(self):
-        """ Report on the training. """
+        """Report on the training."""
 
         if self.verbose:
-            print('===== Train report:')
+            print("===== Train report:")
 
         pass  # Continue in child class.
 
     def test(self):
-        """ Test the model. """
+        """Test the model."""
 
         if self.verbose:
-            print('\n========== TEST:')
+            print("\n========== TEST:")
 
-        self.report['test']['metrics'] = None
+        self.report["test"]["metrics"] = None
 
         pass  # Continue in child class.
 
     def test_report(self):
-        """ Report on the testing. """
+        """Report on the testing."""
 
         if self.verbose:
-            print('===== Test report:')
+            print("===== Test report:")
 
         pass  # Continue in child class.
 
     def serve(self):
-        """ Serve the model. """
+        """Serve the model."""
 
         if self.verbose:
-            print('\n========== SERVE:')
+            print("\n========== SERVE:")
 
         pass  # Continue in child class.
 
     def serve_report(self):
-        """ Report on the serving. """
+        """Report on the serving."""
 
         if self.verbose:
-            print('===== Serve report:')
+            print("===== Serve report:")
 
         pass  # Continue in child class.
 
     def save(
-            self, lesson_dir: str = None, timestamp: bool = False,
-            include_data: bool = False,
-            delete_before_save: list = None) -> None:
-
+        self,
+        lesson_dir: str = None,
+        timestamp: bool = False,
+        include_data: bool = False,
+        delete_before_save: list = None,
+    ) -> None:
         import pickle
 
         if self.verbose:
-            print('\n========== SAVE:')
+            print("\n========== SAVE:")
 
-        if lesson_dir is None and hasattr(self, 'lesson_dir'):
+        if lesson_dir is None and hasattr(self, "lesson_dir"):
             lesson_dir = self.lesson_dir
 
         if isinstance(timestamp, bool) and timestamp is True:
@@ -201,29 +213,32 @@ class Learner:
             # Note: Alternatively, we can use
             # time.strftime("%Y-%m-%d %H:%M:%S")
         elif timestamp is None or timestamp is False:
-            timestamp = ''
+            timestamp = ""
 
         # Save the model.
-        if hasattr(self, 'model'):
+        if hasattr(self, "model"):
             # Do we have a Keras model?
             try:
-                self.model.save(os.path.join(lesson_dir, f'model{timestamp}'))
-                print('✓ Saved the model.')
+                self.model.save(os.path.join(lesson_dir, f"model{timestamp}"))
+                print("✓ Saved the model.")
             # If not, just try pickling it.
             except BaseException:
                 try:
                     pickle.dump(
                         self.model,
-                        open(os.path.join(lesson_dir, f'model{timestamp}.pkl'),
-                             'wb'))
-                    print('✓ Saved the model.')
+                        open(
+                            os.path.join(lesson_dir, f"model{timestamp}.pkl"),
+                            "wb",
+                        ),
+                    )
+                    print("✓ Saved the model.")
                 except BaseException:
-                    print('WARNING: Failed to save the model.')
+                    print("WARNING: Failed to save the model.")
 
         # Save the learner object.
         try:
-            # Delete any attributes which we do not want to save or which cannot be
-            # saved without throwing any error.
+            # Delete any attributes which we do not want to save or which
+            # cannot be saved without throwing any error.
             if isinstance(delete_before_save, list):
                 assert len(delete_before_save) > 0
 
@@ -231,34 +246,46 @@ class Learner:
                 delete_before_save.reverse()
 
                 for k in delete_before_save:
-                    attributes = k.split('.')
+                    attributes = k.split(".")
                     if len(attributes) > 1 and hasattr(
-                            eval('self.' + '.'.join(attributes[:-1])), attributes[-1]):
+                        eval("self." + ".".join(attributes[:-1])),
+                        attributes[-1],
+                    ):
                         delattr(
-                            eval('self.' + '.'.join(attributes[:-1])), attributes[-1])
+                            eval("self." + ".".join(attributes[:-1])),
+                            attributes[-1],
+                        )
                     elif len(attributes) == 1 and hasattr(self, attributes[0]):
                         delattr(self, attributes[0])
                     else:
                         print(
-                            f'WARNING: There is a problem with the attribute {k}')
+                            "WARNING: There is a problem with",
+                            f"the attribute {k}",
+                        )
 
             # Save whatever remains of the learner object.
             pickle.dump(
                 self,
                 open(
-                    os.path.join(
-                        lesson_dir,
-                        f'learner{timestamp}.pkl'),
-                    'wb'))
+                    os.path.join(lesson_dir, f"learner{timestamp}.pkl"), "wb"
+                ),
+            )
 
             if self.verbose:
-                print('✓ Saved the learner.')
+                print("✓ Saved the learner.")
         except BaseException:
-            print('WARNING: Failed to save the learner.')
+            print("WARNING: Failed to save the learner.")
 
-    def __call__(self,
-                 explore=True, select=True, train=True, test=True, serve=True,
-                 save=False, pause=False):
+    def __call__(
+        self,
+        explore=True,
+        select=True,
+        train=True,
+        test=True,
+        serve=True,
+        save=False,
+        pause=False,
+    ):
         """
         Run the various stages of the learning.
 
@@ -280,14 +307,16 @@ class Learner:
 
         if self.verbose:
             print(
-                f'======================================== start [{self.__class__.__name__}]')
+                "======================================== start",
+                f"[{self.__class__.__name__}]",
+            )
 
         self.wrangle()
 
         if explore:
             self.explore()
             if pause:
-                input('Press Enter to continue.')
+                input("Press Enter to continue.")
 
         self.design()
 
@@ -295,17 +324,17 @@ class Learner:
             self.select()
             self.select_report()
             if pause:
-                input('Press Enter to continue.')
+                input("Press Enter to continue.")
         if train:
             self.train()
             self.train_report()
             if pause:
-                input('Press Enter to continue.')
+                input("Press Enter to continue.")
         if test:
             self.test()
             self.test_report()
             if pause:
-                input('Press Enter to continue.')
+                input("Press Enter to continue.")
         if serve:
             self.serve()
             self.serve_report()
@@ -315,11 +344,13 @@ class Learner:
 
         if self.verbose:
             print(
-                f'======================================== end [{self.__class__.__name__}]')
+                "======================================== end",
+                f"[{self.__class__.__name__}]",
+            )
 
 
 # %% Run as script, not as a module.
-if __name__ == '__main__':
+if __name__ == "__main__":
     learner = Learner()
     learner()
     report = learner.report
