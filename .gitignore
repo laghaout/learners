@@ -1,10 +1,6 @@
-build/
-dist/
 .ipynb_checkpoints/
-saved_learners/
-learners.egg-info/
-learners/__pycache__/
-learners/tester.py
+*.egg-info/
+*/__pycache__/
 *~
 
 # ./omega

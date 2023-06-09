@@ -8,6 +8,9 @@ FROM python:3.10-slim
 # Declare the working directory.
 WORKDIR /learners
 
+# Set environment variables
+ENV INSIDE_DOCKER_CONTAINER Yes
+
 # Install Linux utilities.
 RUN apt -y update
 RUN apt -y upgrade
@@ -26,20 +29,18 @@ RUN pip3 install matplotlib==3.6.2
 RUN pip3 install numpy==1.23.5
 RUN pip3 install pandas==1.5.2
 RUN pip3 install scikit-learn==1.2.0
+RUN pip3 install pytest
 RUN pip3 install py-cpuinfo
 #RUN pip3 install sequana --upgrade
 RUN pip3 install dcor==0.6
-COPY Dockerize .
-COPY clean.sh .
-COPY README.md
-
-# Set environment variables
-ENV INSIDE_DOCKER_CONTAINER Yes
+RUN pip3 install -U google-cloud
+RUN pip3 install -U google-cloud.aiplatform
+RUN pip3 install -U gcsfs
 
 # Install the local package.
-COPY pyproject.toml .
+COPY Dockerfile clean.sh README.md dockerize.sh pyproject.toml .pre-commit-config.yaml .
 COPY learners/ learners
-RUN apt -y install python3-venv
+#RUN apt -y install python3-venv
 RUN python3 -m pip install --upgrade build
 RUN python3 -m build
-RUN python3 -m pip install --user .
+RUN python3 -m pip install .

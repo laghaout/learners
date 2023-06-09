@@ -1,15 +1,16 @@
 #!/bin/sh
 
-CONTAINER=learners
 PACKAGE=mlo
+CURR_DIR="."
 
-rm ./*~
-rm .gitignore~
-rm -rf ./$CONTAINER/*~
-rm -rf ./$CONTAINER/lesson/
-rm -rf ./lesson/
-rm -rf ./__pycache__/
-rm -rf ./$CONTAINER/__pycache__/
-rm -rf ./.ipynb_checkpoints/
-rm -rf ./build/ ./dist/ ./$PACKAGE.egg-info/
+rm -rf "$CURR_DIR"/*~
+rm -rf "$CURR_DIR"/lesson/
+rm -rf "$CURR_DIR"/.pytest_cache/
+rm -rf "$CURR_DIR"/__pycache__/
+rm -rf "$CURR_DIR"/.ipynb_checkpoints/
+rm -rf "$CURR_DIR"/*/*~
+rm -rf "$CURR_DIR"/*/lesson/
+rm -rf "$CURR_DIR"/*/.pytest_cache/
+rm -rf "$CURR_DIR"/*/__pycache__/
+rm -rf "$CURR_DIR"/build/ "$CURR_DIR"/dist/ "$CURR_DIR"/$PACKAGE.egg-info/
 

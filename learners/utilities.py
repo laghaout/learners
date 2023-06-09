@@ -47,29 +47,31 @@ def version_table(print2screen=True):
     from matplotlib import __version__ as plt_version
     from numpy import __version__ as np_version
     from pandas import __version__ as pd_version
+    from pytest import __version__ as pyt_version
     from sklearn import __version__ as sk_version
     from sys import version_info
     from tensorflow import __version__ as tf_version
 
     version_table = {
-        "Python": ("3.9.16", ".".join(str(v) for v in version_info[0:3])),
-        "TensorFlow.": ("2.11.0", tf_version),
-        "NumPy": ("1.23.5", np_version),
-        "matplotlib": ("3.6.2", plt_version),
-        "sklearn": ("1.2.0", sk_version),
-        "PyQt5": ("5.6.2", None),
-        "pandas": ("1.5.2", pd_version),
-        "dcor": ("0.6", dco_version),
-        "OS": (
-            "Linux-5.10.0-14-amd64-x86_64-with-glibc2.31",
-            platform.platform(),
-        ),
         "CPU": (
             "Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz",
             cpuinfo.get_cpu_info()["brand_raw"],
         ),
         "CUDA": ("8.0.44", None),
+        "dcor": ("0.6", dco_version),
         "GPU": ("NVIDIA GeForce GTX", None),
+        "matplotlib": ("3.6.2", plt_version),
+        "NumPy": ("1.23.5", np_version),
+        "OS": (
+            "Linux-5.10.0-14-amd64-x86_64-with-glibc2.31",
+            platform.platform(),
+        ),
+        "pandas": ("1.5.2", pd_version),
+        "PyQt5": ("5.6.2", None),
+        "pytest": ("7.3.1", pyt_version),
+        "Python": ("3.9.16", ".".join(str(v) for v in version_info[0:3])),
+        "sklearn": ("1.2.0", sk_version),
+        "TensorFlow.": ("2.11.0", tf_version),
     }
 
     if print2screen:
