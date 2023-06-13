@@ -37,10 +37,12 @@ RUN pip3 install -U google-cloud
 RUN pip3 install -U google-cloud.aiplatform
 RUN pip3 install -U gcsfs
 
+# Temporarily downgrade `protobuf` to avoid <https://stackoverflow.com/questions/72441758/typeerror-descriptors-cannot-not-be-created-directly>
+RUN pip3 install protobuf==3.20.*
+
 # Install the local package.
 COPY Dockerfile clean.sh README.md dockerize.sh pyproject.toml .pre-commit-config.yaml .
 COPY learners/ learners
-#RUN apt -y install python3-venv
 RUN python3 -m pip install --upgrade build
 RUN python3 -m build
 RUN python3 -m pip install .
