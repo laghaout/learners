@@ -278,12 +278,12 @@ class Learner:
 
     def __call__(
         self,
-        explore=True,
-        select=True,
+        explore=False,
+        select=False,
         train=True,
         test=True,
-        serve=True,
-        save=False,
+        serve=False,
+        save=True,
         pause=False,
     ):
         """
@@ -340,7 +340,7 @@ class Learner:
             self.serve_report()
 
         if save:
-            self.save(self.lesson_dir)
+            self.save()
 
         if self.verbose:
             print(
