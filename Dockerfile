@@ -41,8 +41,9 @@ RUN pip3 install -U gcsfs
 RUN pip3 install protobuf==3.20.*
 
 # Install the local package.
-COPY Dockerfile *.* .* ./
+COPY Dockerfile *.yml *.sh *.toml README.* .pre-commit-config.yaml .env ./
 COPY learners/ learners
+COPY tests/ tests
 RUN python3 -m pip install --upgrade build
 RUN python3 -m build
 RUN python3 -m pip install .

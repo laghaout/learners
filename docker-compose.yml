@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: $IMAGE_URI
     entrypoint: /bin/bash
-    working_dir: /home/
+    working_dir: /learners/
     tty: true
     stdin_open: true
     logging:
