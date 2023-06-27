@@ -22,3 +22,6 @@ python3 -m build
 python3 -m pip install --user .
 
 # Push to PyPi: https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
+# Clean up artifacts.
+./clean.sh
