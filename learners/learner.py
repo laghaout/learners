@@ -44,8 +44,9 @@ class Learner:
 
         Parameters
         ----------
-        lesson_dir: list, tuple
-            Relative path of the directory where the lesson is stored.
+        lesson_dir: list, tuple, str
+            Relative path of the directory where the lesson is stored. If None,
+            do not create the dictionary.
         default_lesson_dir: list
             Relative path to the default parent directory.
         report: dict
@@ -60,10 +61,11 @@ class Learner:
 
         # Specify the directory where the learner and its metrics are to be
         # saved.
-        if isinstance(lesson_dir, list) or isinstance(lesson_dir, tuple):
-            lesson_dir = os.path.join(*lesson_dir)
-        if not os.path.exists(lesson_dir):
-            os.makedirs(lesson_dir)
+        if lesson_dir is not None:
+            if isinstance(lesson_dir, list) or isinstance(lesson_dir, tuple):
+                lesson_dir = os.path.join(*lesson_dir)
+            if not os.path.exists(lesson_dir):
+                os.makedirs(lesson_dir)
 
         # Convert all the arguments to attributes.
         util.args_to_attributes(

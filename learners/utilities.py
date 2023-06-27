@@ -88,6 +88,18 @@ def version_table(print2screen=True):
     return version_table
 
 
+def load_learner(path="../lesson/learner.pkl"):
+    """Make sure to place yourself in the same directory as `learner.py`"""
+
+    import pickle
+    from learners.learner import Learner
+
+    learner = Learner(lesson_dir=None)
+    learner = pickle.load(open(path, "rb"))
+
+    return learner
+
+
 class EnvManager:
     """
     Environment manager. This is used to encapsulate into a single object all
