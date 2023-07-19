@@ -6,7 +6,7 @@ To dockerize,
 2. run =sh dockerize.sh=.
 
 * Load a pickled learner
-Place yourself in the same directory as =learner.py= then run the following:
+To load a learner that has been pickled, place yourself in the same directory as =learner.py= then run the following:
 #+begin_src python
 import pickle
 from learners.learner import Learner

@@ -1,12 +1,12 @@
 
 # Table of Contents
 
-1.  [Dockerize](#org7801b25)
-2.  [Load a pickled learner](#orgb7ab378)
+1.  [Dockerize](#orgabde1d9)
+2.  [Load a pickled learner](#org30e8cd7)
 
 
 
-<a id="org7801b25"></a>
+<a id="orgabde1d9"></a>
 
 # Dockerize
 
@@ -16,11 +16,11 @@ To dockerize,
 2.  run `sh dockerize.sh`.
 
 
-<a id="orgb7ab378"></a>
+<a id="org30e8cd7"></a>
 
 # Load a pickled learner
 
-Place yourself in the same directory as `learner.py` then run the following:
+To load a learner that has been pickled, place yourself in the same directory as `learner.py` then run the following:
 
     import pickle
     from learners.learner import Learner
