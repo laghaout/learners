@@ -2,8 +2,8 @@
 
 * Dockerize
 To dockerize,
-1. Run =cp .env_template .env= and edit the environment variables if needed.
-2. Run =sh dockerize.sh=.
+1. run =cp .env_template .env= and edit the environment variables if needed then
+2. run =sh dockerize.sh=.
 
 * Load a pickled learner
 Place yourself in the same directory as =learner.py= then run the following:
