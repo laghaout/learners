@@ -43,7 +43,7 @@ def version_table(print2screen=True):
     import cpuinfo  # python -m pip install -U py-cpuinfo
     import platform
 
-    from dcor import __version__ as dco_version
+    # from dcor import __version__ as dco_version
     from matplotlib import __version__ as plt_version
     from numpy import __version__ as np_version
     from pandas import __version__ as pd_version
@@ -58,7 +58,7 @@ def version_table(print2screen=True):
             cpuinfo.get_cpu_info()["brand_raw"],
         ),
         "CUDA": ("8.0.44", None),
-        "dcor": ("0.6", dco_version),
+        # "dcor": ("0.6", dco_version),
         "GPU": ("NVIDIA GeForce GTX", None),
         "matplotlib": ("3.6.2", plt_version),
         "NumPy": ("1.23.5", np_version),
