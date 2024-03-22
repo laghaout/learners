@@ -106,12 +106,12 @@ class Wrangler:
         # Pre-split wrangling.
 
         # Split into train, validate, and test sets.
-        # self.data.split()
+        # self.split()
 
         # Post-split wrangling.
 
         # Normalize the data based on the training set.
-        # self.data.normalize()
+        # self.normalize()
 
         return dict(stats=None)
 
